@@ -4,13 +4,13 @@
 DETECTOR=
 TARGET=
 
-if ! [ -z $1 ]; then
-	TARGET=$1
+if [ -z $DETECTOR ] || ! [ -d $DETECTOR ]; then
+    echo Invalid areaDetector path. Exiting
+    exit 1
 fi
 
-if [ -z $DETECTOR ]; then
-    echo No areaDetector path set. Exiting
-    exit 1
+if ! [ -z $1 ]; then
+	TARGET=$1
 fi
 
 if ! [ -z $TARGET ]; then
