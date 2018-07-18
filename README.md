@@ -1,4 +1,4 @@
-# Deployment scripts #
+# ioc_deploy #
 These scripts create a portable deployment of an areaDetector plugin that was previously compiled locally. The script copies all of the
 important files from the local installation into a given target directory, and creates an envPaths file that directs the IOC to use the
 files in this new directory.
