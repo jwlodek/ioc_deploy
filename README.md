@@ -12,7 +12,7 @@ files in this new directory.
 
 ## Usage ##
 It is highly reccomended to use the fullDeployment script, which copies the necessary files and can add plugins with the envPaths file fully
-configured. Before using any of the scripts, it is necessary to define the BASE, DETECTOR, and EPICS macros which define the path to EPICS base,
+configured. Before using any of the scripts, it is necessary to define the BASE, DETECTOR, and SUPPORT macros which define the path to EPICS base,
 areaDetector, and EPICS modules, respectively. The TARGET macro may also be defined in the script, or passed as a command line argument 
 (the command line argument has priority over the value in the script). Then simply run the script from bash, and it will search for and copy
 the files automatically, and the addPlugin/fullDeployment scripts will prompt for the name of the plugin to add. 
