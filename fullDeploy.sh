@@ -1,12 +1,12 @@
 #!/bin/bash
 
-BASE=/epics/base-7.0.1.1
-DETECTOR=/home/mrolland/Documents/epics/synAppsRelease/synApps/support/areaDetector-master
-SUPPORT=/home/mrolland/Documents/epics/synAppsRelease/synApps/support
+#BASE=/epics/base-7.0.1.1
+#DETECTOR=/home/mrolland/Documents/epics/synAppsRelease/synApps/support/areaDetector-master
+#SUPPORT=/home/mrolland/Documents/epics/synAppsRelease/synApps/support
 TARGET=
-#BASE=
-#DETECTOR=
-#SUPPORT=
+BASE=
+DETECTOR=
+SUPPORT=
 
 if [ -z $BASE ] || ! [ -d $BASE ]; then
     echo Invalid EPICS base path. Exiting
