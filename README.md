@@ -8,7 +8,7 @@ files in this new directory.
 - The EPICS modules that these plugins depend on must be compiled already.
   - asyn, autosave, busy, calc, seq, sscan, iocStats
 - EPICS base must be compiled already
-- The envPaths file uses absolute paths; thus, once the target directory is created it can not be moved. (Unless the envPaths file is changed)
+- When using absoluteFullDeploy, the envPaths file uses absolute paths; thus, once the target directory is created it can not be moved. (Unless the envPaths file is changed)
 
 ## Usage ##
 It is highly reccomended to use the fullDeployment script, which copies the necessary files and can add plugins with the envPaths file fully
