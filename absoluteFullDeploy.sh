@@ -258,6 +258,30 @@ if ! [ -z $TARGET ]; then
 	
 	echo done.
 
+	echo making README...
+
+	cd $TARGET
+	echo "This deployment of areaDetector was created by absoluteFullDeploy.sh" > README.txt
+	echo "from https://github.com/rollandmichae7/ioc_deploy" >> README.txt
+	echo >> README.txt
+	echo "To use IOCs with this deployment, copy the envPaths file" >> README.txt
+	echo "from this directory into the IOC's directory and fill in" >> README.txt 
+	echo "the 3 required plugin-dependent variables in the file." >> README.txt
+	echo "For plugins that use st.cmd.linux and st.cmd.windows," >> README.txt
+	echo "copy envPaths as envPaths.linux or envPaths.windows" >> README.txt
+	echo "according to to your architecture." >> README.txt
+	echo "Any plugin added during the running of the script" >> README.txt
+	echo "will already have envPaths configured." >> README.txt
+	echo >> README.txt
+	echo "WARNING: envPaths uses absolute paths based on the location" >> README.txt
+	echo "of this deployment's initial creation. These will break if this" >> README.txt
+	echo "deployment is moved, and the IOC will not work." >> README.txt
+	echo "If this deployment is moved, envPaths MUST be updated." >> README.txt
+	cd $HOME
+	
+	echo done.
+
+	
 	if ! [ -z $2 ]; then
 	    PLUGIN=$2
 	else

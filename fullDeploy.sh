@@ -207,10 +207,27 @@ if ! [ -z $TARGET ]; then
 	echo \# epicsEnvSet\(\"TOP\", \"\<path to plugin/iocs/pluginIOC\>\"\) >> envPaths
 	echo \# epicsEnvSet\(\"IOC\", \"\<iocPlugin\>\"\) >> envPaths
 	echo \# epicsEnvSet\(\"\<PLUGIN_NAME\>\", \"\<path to plugin\>\"\) >> envPaths
-	cd $HOME
 	
 	echo done.
 
+	echo making README...
+
+	echo "This deployment of areaDetector was created by fullDeploy.sh" > README.txt
+	echo "from https://github.com/rollandmichae7/ioc_deploy" >> README.txt
+	echo >> README.txt
+	echo "To use IOCs with this deployment, copy the envPaths file" >> README.txt
+	echo "from this directory into the IOC's directory and fill in" >> README.txt 
+	echo "the 3 required plugin-dependent variables in the file." >> README.txt
+	echo "For plugins that use st.cmd.linux and st.cmd.windows," >> README.txt
+	echo "copy envPaths as envPaths.linux or envPaths.windows" >> README.txt
+	echo "according to to your architecture." >> README.txt
+	echo "Any plugin added during the running of the script" >> README.txt
+	echo "will already have envPaths configured." >> README.txt
+
+	echo done.
+
+	cd $HOME
+	
 	if ! [ -z $2 ]; then
 	    PLUGIN=$2
 	else
