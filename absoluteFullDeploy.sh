@@ -36,6 +36,7 @@ if ! [ -z $TARGET ]; then
 	AD_DIR="$(echo ${PWD##*/})"
 	cd $HOME
 	mkdir -p $TARGET/$AD_DIR
+	AD_DIR=$TARGET/$AD_DIR
 
 	cd $BASE
 	BASE_DIR="$(echo ${PWD##*/})"
@@ -47,38 +48,38 @@ if ! [ -z $TARGET ]; then
 	# CORE="$(ls $DETECTOR | grep -m 1 ADCore)"
 	# if ! [ -z $CORE ]; then
 	        # echo copying $CORE...
-	        # mkdir -p $TARGET/$AD_DIR/$CORE/ADApp
-	        # cp -r -n $DETECTOR/$CORE/bin $TARGET/$AD_DIR/$CORE
-	        # cp -r -n $DETECTOR/$CORE/lib $TARGET/$AD_DIR/$CORE
- 	        # cp -r -n $DETECTOR/$CORE/db $TARGET/$AD_DIR/$CORE
-	        # cp -r -n $DETECTOR/$CORE/documentation $TARGET/$AD_DIR/$CORE
-	        # cp -r -n $DETECTOR/$CORE/iocBoot $TARGET/$AD_DIR/$CORE
-	        # cp -r -n $DETECTOR/$CORE/Viewers $TARGET/$AD_DIR/$CORE
-	        # cp -r -n $DETECTOR/$CORE/ADApp/Db $TARGET/$AD_DIR/$CORE/ADApp
-	        # cp -r -n $DETECTOR/$CORE/ADApp/op $TARGET/$AD_DIR/$CORE/ADApp
+	        # mkdir -p $TARGET/areaDetector/$CORE/ADApp
+	        # cp -r -n $DETECTOR/$CORE/bin $AD_DIR/$CORE
+	        # cp -r -n $DETECTOR/$CORE/lib $AD_DIR/$CORE
+ 	        # cp -r -n $DETECTOR/$CORE/db $AD_DIR/$CORE
+	        # cp -r -n $DETECTOR/$CORE/documentation $AD_DIR/$CORE
+	        # cp -r -n $DETECTOR/$CORE/iocBoot $AD_DIR/$CORE
+	        # cp -r -n $DETECTOR/$CORE/Viewers $AD_DIR/$CORE
+	        # cp -r -n $DETECTOR/$CORE/ADApp/Db $AD_DIR/$CORE/ADApp
+	        # cp -r -n $DETECTOR/$CORE/ADApp/op $AD_DIR/$CORE/ADApp
 	# else
 	        # echo Not found
 	# fi
 
 	echo copying ADCore...
-	mkdir -p $TARGET/$AD_DIR/ADCore/ADApp
-	cp -r -n $DETECTOR/ADCore/bin $TARGET/$AD_DIR/ADCore
-	cp -r -n $DETECTOR/ADCore/lib $TARGET/$AD_DIR/ADCore
-	cp -r -n $DETECTOR/ADCore/db $TARGET/$AD_DIR/ADCore
-	cp -r -n $DETECTOR/ADCore/documentation $TARGET/$AD_DIR/ADCore
-	cp -r -n $DETECTOR/ADCore/iocBoot $TARGET/$AD_DIR/ADCore
-	cp -r -n $DETECTOR/ADCore/Viewers $TARGET/$AD_DIR/ADCore
-	cp -r -n $DETECTOR/ADCore/ADApp/Db $TARGET/$AD_DIR/ADCore/ADApp
-	cp -r -n $DETECTOR/ADCore/ADApp/op $TARGET/$AD_DIR/ADCore/ADApp
+	mkdir -p $AD_DIR/ADCore/ADApp
+	cp -r -n $DETECTOR/ADCore/bin $AD_DIR/ADCore
+	cp -r -n $DETECTOR/ADCore/lib $AD_DIR/ADCore
+	cp -r -n $DETECTOR/ADCore/db $AD_DIR/ADCore
+	cp -r -n $DETECTOR/ADCore/documentation $AD_DIR/ADCore
+	cp -r -n $DETECTOR/ADCore/iocBoot $AD_DIR/ADCore
+	cp -r -n $DETECTOR/ADCore/Viewers $AD_DIR/ADCore
+	cp -r -n $DETECTOR/ADCore/ADApp/Db $AD_DIR/ADCore/ADApp
+	cp -r -n $DETECTOR/ADCore/ADApp/op $AD_DIR/ADCore/ADApp
 
 	echo looking for ADSupport...
 	ADSUPPORT="$(ls $DETECTOR | grep -m 1 ADSupport)"
 	if ! [ -z $ADSUPPORT ]; then
 	    echo copying $ADSUPPORT...
-	    mkdir -p $TARGET/$AD_DIR/$ADSUPPORT
-	    cp -r -n $DETECTOR/$ADSUPPORT/bin $TARGET/$AD_DIR/$ADSUPPORT
-	    cp -r -n $DETECTOR/$ADSUPPORT/lib $TARGET/$AD_DIR/$ADSUPPORT
-	    cp -r -n $DETECTOR/$ADSUPPORT/supportApp $TARGET/$AD_DIR/$ADSUPPORT
+	    mkdir -p $AD_DIR/$ADSUPPORT
+	    cp -r -n $DETECTOR/$ADSUPPORT/bin $AD_DIR/$ADSUPPORT
+	    cp -r -n $DETECTOR/$ADSUPPORT/lib $AD_DIR/$ADSUPPORT
+	    cp -r -n $DETECTOR/$ADSUPPORT/supportApp $AD_DIR/$ADSUPPORT
 	    echo done.
 	else
 	    echo Not found.
@@ -186,24 +187,70 @@ if ! [ -z $TARGET ]; then
 	fi
 
 	echo creating envPaths file...
+	cd $TARGET/$ASYN
+	ASYN_DIR="$(pwd)"
+	cd $HOME
+	cd $TARGET/$BUSY
+	BUSY_DIR="$(pwd)"
+	cd $HOME
+	cd $TARGET/$SAVE
+	SAVE_DIR="$(pwd)"
+	cd $HOME
+	cd $TARGET/$CALC
+	CALC_DIR="$(pwd)"
+	cd $HOME
+	cd $TARGET/$SEQ
+	SEQ_DIR="$(pwd)"
+	cd $HOME
+	cd $TARGET/$SCAN
+	SCAN_DIR="$(pwd)"
+	cd $HOME
+	if ! [ -z $STATS ]; then
+	    cd $TARGET/$STATS
+	    STATS_DIR="$(pwd)"
+	    cd $HOME
+	else
+	    cd $TARGET/$DSTATS
+	    STATS_DIR="$(pwd)"
+	    cd $HOME
+	fi
+	cd $TARGET
+	SUPPORT_DIR="$(pwd)"
+	cd $HOME
+	cd $AD_DIR
+	AD_DIR="$(pwd)"
+	cd $HOME
+	cd $TARGET/$BASE_DIR
+        BASE_DIR="$(pwd)"
+	cd $HOME
 	
-	BACK="../../../../../.."
+	#echo $IOC_DIR
+	#echo $ASYN_DIR
+	#echo $BUSY_DIR
+	#echo $SAVE_DIR
+	#echo $CALC_DIR
+	#echo $SEQ_DIR
+	#echo $SCAN_DIR
+	#echo $STATS_DIR
+	#echo $SUPPORT_DIR
+	#echo $AD_DIR
+
 	cd $TARGET
 	echo \# put this file in IOC folders to use this deployment. > envPaths
 	echo \# plugins added with fullDeploy.sh will automatically have this file with appropriate paths copied in. >> envPaths
 	echo >> envPaths
-	echo epicsEnvSet\(\"SUPPORT\", \"$BACK\"\) >> envPaths
-	echo epicsEnvSet\(\"ASYN\", \"$BACK/$ASYN\"\) >> envPaths
-	echo epicsEnvSet\(\"AREA_DETECTOR\", \"$BACK/$AD_DIR\"\) >> envPaths
-	echo epicsEnvSet\(\"ADSUPPORT\", \"$BACK/$AD_DIR/$ADSUPPORT\"\) >> envPaths
-	echo epicsEnvSet\(\"ADCORE\", \"$BACK/$AD_DIR/ADCore\"\) >> envPaths
-	echo epicsEnvSet\(\"AUTOSAVE\", \"$BACK/$SAVE\"\) >> envPaths
-	echo epicsEnvSet\(\"BUSY\", \"$BACK/$BUSY\"\) >> envPaths
-	echo epicsEnvSet\(\"CALC\", \"$BACK/$CALC\"\) >> envPaths
-	echo epicsEnvSet\(\"SNSEQ\", \"$BACK/$SEQ\"\) >> envPaths
-	echo epicsEnvSet\(\"SSCAN\", \"$BACK/$SCAN\"\) >> envPaths
-	echo epicsEnvSet\(\"DEVIOCSTATS\", \"$BACK/$STATS\"\) >> envPaths
-	echo epicsEnvSet\(\"EPICS_BASE\", \"$BACK/$BASE_DIR\"\) >> envPaths
+	echo epicsEnvSet\(\"SUPPORT\", \"$SUPPORT_DIR\"\) >> envPaths
+	echo epicsEnvSet\(\"ASYN\", \"$ASYN_DIR\"\) >> envPaths
+	echo epicsEnvSet\(\"AREA_DETECTOR\", \"$AD_DIR\"\) >> envPaths
+	echo epicsEnvSet\(\"ADSUPPORT\", \"$AD_DIR/$ADSUPPORT\"\) >> envPaths
+	echo epicsEnvSet\(\"ADCORE\", \"$AD_DIR/ADCore\"\) >> envPaths
+	echo epicsEnvSet\(\"AUTOSAVE\", \"$SAVE_DIR\"\) >> envPaths
+	echo epicsEnvSet\(\"BUSY\", \"$BUSY_DIR\"\) >> envPaths
+	echo epicsEnvSet\(\"CALC\", \"$CALC_DIR\"\) >> envPaths
+	echo epicsEnvSet\(\"SNSEQ\", \"$SEQ_DIR\"\) >> envPaths
+	echo epicsEnvSet\(\"SSCAN\", \"$SCAN_DIR\"\) >> envPaths
+	echo epicsEnvSet\(\"DEVIOCSTATS\", \"$STATS_DIR\"\) >> envPaths
+	echo epicsEnvSet\(\"EPICS_BASE\", \"$BASE_DIR\"\) >> envPaths
 	echo \# epicsEnvSet\(\"TOP\", \"\<path to plugin/iocs/pluginIOC\>\"\) >> envPaths
 	echo \# epicsEnvSet\(\"IOC\", \"\<iocPlugin\>\"\) >> envPaths
 	echo \# epicsEnvSet\(\"\<PLUGIN_NAME\>\", \"\<path to plugin\>\"\) >> envPaths
@@ -229,19 +276,20 @@ if ! [ -z $TARGET ]; then
 		AD_DIR="$(echo ${PWD##*/})"
 		cd $HOME
 		mkdir -p $TARGET/$AD_DIR/$PLUGIN/$APP
+		AD_DIR=$TARGET/$AD_DIR
 		
-		cp -r -n $DETECTOR/$PLUGIN/bin $TARGET/$AD_DIR/$PLUGIN
-		cp -r -n $DETECTOR/$PLUGIN/db $TARGET/$AD_DIR/$PLUGIN
-		cp -r -n $DETECTOR/$PLUGIN/documentation $TARGET/$AD_DIR/$PLUGIN
-		cp -r -n $DETECTOR/$PLUGIN/iocs $TARGET/$AD_DIR/$PLUGIN
-		cp -r -n $DETECTOR/$PLUGIN/lib $TARGET/$AD_DIR/$PLUGIN
-		cp -r -n $DETECTOR/$PLUGIN/$APP/Db $TARGET/$AD_DIR/$PLUGIN/$APP
-		cp -r -n $DETECTOR/$PLUGIN/$APP/op $TARGET/$AD_DIR/$PLUGIN/$APP
+		cp -r -n $DETECTOR/$PLUGIN/bin $AD_DIR/$PLUGIN
+		cp -r -n $DETECTOR/$PLUGIN/db $AD_DIR/$PLUGIN
+		cp -r -n $DETECTOR/$PLUGIN/documentation $AD_DIR/$PLUGIN
+		cp -r -n $DETECTOR/$PLUGIN/iocs $AD_DIR/$PLUGIN
+		cp -r -n $DETECTOR/$PLUGIN/lib $AD_DIR/$PLUGIN
+		cp -r -n $DETECTOR/$PLUGIN/$APP/Db $AD_DIR/$PLUGIN/$APP
+		cp -r -n $DETECTOR/$PLUGIN/$APP/op $AD_DIR/$PLUGIN/$APP
 		echo done.
 
 		echo making envPaths file...
 		
-		cd $TARGET/$AD_DIR/$PLUGIN
+		cd $AD_DIR/$PLUGIN
 		PLUG_ABSPATH=$(pwd)
 		cd $HOME
 		IOC_DIR="$(ls -d1 $PLUG_ABSPATH/iocs/** | grep -m 1 IOC)" # iocs/prosilicaIOC
@@ -250,14 +298,13 @@ if ! [ -z $TARGET ]; then
 
 		cd $TARGET
 		cp envPaths $IOC_DIR
+		cd $IOC_DIR/../..
+		TOP=$(pwd)
 		cd $IOC_DIR
-		TOP="../.."
 		PLUGIN_UPPER="$(echo $PLUGIN | tr a-z A-Z)"
 		echo epicsEnvSet\(\"IOC\", \"ioc$PLUGIN\"\) >> envPaths
 	        echo epicsEnvSet\(\"TOP\", \"$TOP\"\) >> envPaths
 		echo epicsEnvSet\(\"$PLUGIN_UPPER\", \"$TOP/../..\"\) >> envPaths
-		cp envPaths envPaths.linux
-		cp envPaths envPaths.windows
 		echo done.
 		cd $HOME
 	    fi
