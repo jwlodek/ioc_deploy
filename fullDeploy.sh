@@ -4,6 +4,7 @@
 #DETECTOR=/home/mrolland/Documents/epics/synAppsRelease/synApps/support/areaDetector-master
 #SUPPORT=/home/mrolland/Documents/epics/synAppsRelease/synApps/support
 TARGET=
+PREFIX=
 BASE=
 DETECTOR=
 SUPPORT=
@@ -24,7 +25,11 @@ if [ -z $SUPPORT ] || ! [ -d $SUPPORT ]; then
 fi
 
 if ! [ -z $1 ]; then
-	TARGET=$1
+    TARGET=$1
+fi
+
+if ! [ -z $2 ]; then
+    PREFIX=$2
 fi
 
 if ! [ -z $TARGET ]; then
@@ -228,12 +233,8 @@ if ! [ -z $TARGET ]; then
 
 	cd $HOME
 	
-	if ! [ -z $2 ]; then
-	    PLUGIN=$2
-	else
-	    echo Enter name of an AD plugin to add or \"done\" to exit:
-	    read PLUGIN
-	fi
+	echo Enter name of an AD plugin to add or \"done\" to exit:
+	read PLUGIN
 	while ! [ $PLUGIN = done ]; do
 	    PLUGIN="$(ls $DETECTOR | grep -m 1 $PLUGIN)"
 	    if [ -z $PLUGIN ]; then
@@ -276,6 +277,16 @@ if ! [ -z $TARGET ]; then
 		cp envPaths envPaths.linux
 		cp envPaths envPaths.windows
 		echo done.
+
+		if ! [ -z $PREFIX ]; then
+		    echo changing prefix to $PREFIX...
+		    lineNum="$(grep -n epicsEnvSet\(\"PREFIX\" st.cmd | grep -m 1 -v "#" | grep -Eo '^[^:]+')"
+		    newLine="epicsEnvSet(\"PREFIX\", \"${PREFIX}\")"
+		    # echo $newLine
+		    sed -i "${lineNum}s/.*/${newLine}/" st.cmd
+		    echo done.
+	       fi
+		
 		cd $HOME
 	    fi
 	    echo Name of AD plugin to add:
