@@ -4,10 +4,12 @@
 #DETECTOR=/home/mrolland/Documents/epics/synAppsRelease/synApps/support/areaDetector-master
 #SUPPORT=/home/mrolland/Documents/epics/synAppsRelease/synApps/support
 TARGET=
-PREFIX=
 BASE=
 DETECTOR=
 SUPPORT=
+# if set, will replace the prefix for every IOC added
+# else, prefix is prompted for for each IOC added
+PREFIX_OVERRIDE=
 
 if [ -z $BASE ] || ! [ -d $BASE ]; then
     echo Invalid EPICS base path. Exiting
@@ -29,7 +31,7 @@ if ! [ -z $1 ]; then
 fi
 
 if ! [ -z $2 ]; then
-    PREFIX=$2
+    PREFIX_OVERRIDE=$2
 fi
 
 if ! [ -z $TARGET ]; then
@@ -333,14 +335,22 @@ if ! [ -z $TARGET ]; then
 		echo epicsEnvSet\(\"$PLUGIN_UPPER\", \"$TOP/../..\"\) >> envPaths
 		echo done.
 
+		if ! [ -z $PREFIX_OVERRIDE ]; then
+		    PREFIX=$PREFIX_OVERRIDE
+		else
+		    echo Enter prefix to use for this IOC:
+		    read PREFIX
+		fi
+		
 		if ! [ -z $PREFIX ]; then
 		    echo changing prefix to $PREFIX...
 		    lineNum="$(grep -n epicsEnvSet\(\"PREFIX\" st.cmd | grep -m 1 -v "#" | grep -Eo '^[^:]+')"
 		    newLine="epicsEnvSet(\"PREFIX\", \"${PREFIX}\")"
-		    # echo $newLine
 		    sed -i "${lineNum}s/.*/${newLine}/" st.cmd
 		    echo done.
-	       fi
+		else
+		    echo Prefix left unchanged.
+		fi
 
 	       cd $HOME
 	    fi
