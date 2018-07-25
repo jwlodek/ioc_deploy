@@ -192,12 +192,12 @@ if ! [ -z $TARGET ]; then
 	    echo Not found.
 	fi
 
-	echo creating envPaths file...
 	
+	echo creating envPaths file...
 	BACK="../../../../../.."
 	cd $TARGET
 	echo \# put this file in IOC folders to use this deployment. > envPaths
-	echo \# plugins added with fullDeploy.sh will automatically have this file with appropriate paths copied in. >> envPaths
+	echo \# plugins added with [absolute]fullDeploy.sh will automatically have this file with appropriate paths copied in. >> envPaths
 	echo >> envPaths
 	echo epicsEnvSet\(\"SUPPORT\", \"$BACK\"\) >> envPaths
 	echo epicsEnvSet\(\"ASYN\", \"$BACK/$ASYN\"\) >> envPaths
@@ -214,11 +214,10 @@ if ! [ -z $TARGET ]; then
 	echo \# epicsEnvSet\(\"TOP\", \"\<path to plugin/iocs/pluginIOC\>\"\) >> envPaths
 	echo \# epicsEnvSet\(\"IOC\", \"\<iocPlugin\>\"\) >> envPaths
 	echo \# epicsEnvSet\(\"\<PLUGIN_NAME\>\", \"\<path to plugin\>\"\) >> envPaths
-	
 	echo done.
 
+	
 	echo making README...
-
 	echo "This deployment of areaDetector was created by fullDeploy.sh" > README.txt
 	echo "from https://github.com/rollandmichae7/ioc_deploy" >> README.txt
 	echo >> README.txt
@@ -230,7 +229,6 @@ if ! [ -z $TARGET ]; then
 	echo "according to to your architecture." >> README.txt
 	echo "Any plugin added during the running of the script" >> README.txt
 	echo "will already have envPaths configured." >> README.txt
-
 	echo done.
 
 	cd $HOME
@@ -239,17 +237,15 @@ if ! [ -z $TARGET ]; then
 	read PLUGIN
 	while ! [ $PLUGIN = done ]; do
 	    PLUGIN="$(ls $DETECTOR | grep -m 1 $PLUGIN)"
-	    if [ -z $PLUGIN ]; then
+	    if [ -z "$PLUGIN" ]; then
 		echo Invalid plugin name.
 	    else
 		echo copying $PLUGIN...
 		APP="$(ls $DETECTOR/$PLUGIN | grep App)"
-
 		cd $DETECTOR
 		AD_DIR="$(echo ${PWD##*/})"
 		cd $HOME
 		mkdir -p $TARGET/$AD_DIR/$PLUGIN/$APP
-		
 		cp -r -n $DETECTOR/$PLUGIN/bin $TARGET/$AD_DIR/$PLUGIN
 		cp -r -n $DETECTOR/$PLUGIN/db $TARGET/$AD_DIR/$PLUGIN
 		cp -r -n $DETECTOR/$PLUGIN/documentation $TARGET/$AD_DIR/$PLUGIN
@@ -259,15 +255,12 @@ if ! [ -z $TARGET ]; then
 		cp -r -n $DETECTOR/$PLUGIN/$APP/op $TARGET/$AD_DIR/$PLUGIN/$APP
 		echo done.
 
-		echo making envPaths file...
-		
+		echo making envPaths file...		
 		cd $TARGET/$AD_DIR/$PLUGIN
 		PLUG_ABSPATH=$(pwd)
 		cd $HOME
 		IOC_DIR="$(ls -d1 $PLUG_ABSPATH/iocs/** | grep -m 1 IOC)" # iocs/prosilicaIOC
 		IOC_DIR="$(ls -d1 $IOC_DIR/iocBoot/** | grep -m 1 ioc)" # iocBoot/iocProsilica
-		# echo $IOC_DIR
-
 		cd $TARGET
 		cp envPaths $IOC_DIR
 		cd $IOC_DIR
@@ -278,25 +271,58 @@ if ! [ -z $TARGET ]; then
 		echo epicsEnvSet\(\"$PLUGIN_UPPER\", \"$TOP/../..\"\) >> envPaths
 		cp envPaths envPaths.linux
 		cp envPaths envPaths.windows
+		cp st.cmd OLD_st.cmd
+		ENV="$(grep -m 1 '< envPaths' st.cmd)"
+		if [ -z "$ENV" ]; then
+		    sed -i '1i< envPaths' st.cmd
+		fi
 		echo done.
 
-		if ! [ -z $PREFIX_OVERRIDE ]; then
+		
+		if ! [ -z "$PREFIX_OVERRIDE" ]; then
 		    PREFIX=$PREFIX_OVERRIDE
 		else
 		    echo Enter prefix to use for this IOC:
 		    read PREFIX
 		fi
-		
-		if ! [ -z $PREFIX ]; then
+		if ! [ -z "$PREFIX" ]; then
 		    echo changing prefix to $PREFIX...
 		    lineNum="$(grep -n epicsEnvSet\(\"PREFIX\" st.cmd | grep -m 1 -v "#" | grep -Eo '^[^:]+')"
 		    newLine="epicsEnvSet(\"PREFIX\", \"${PREFIX}\")"
-		    sed -i "${lineNum}s/.*/${newLine}/" st.cmd
+		    if ! [ -z "$lineNum" ]; then
+			sed -i "${lineNum}s/.*/${newLine}/" st.cmd
+		    else
+			sed -i "1i${newLine}" st.cmd
+		    fi
 		    echo done.
 		else
 		    echo Prefix left unchanged.
 		fi
+
+		
+		echo moving EPICS variable declarations to unique.cmd...
+		UNIQUE="$(ls | grep unique.cmd)"
+		if [ -z "$UNIQUE" ]; then
+		    echo \# EPICS variables extracted from OLD_st.cmd > unique.cmd
+		else
+		    echo \# EPICS variables extracted from OLD_st.cmd >> unique.cmd
+		fi
+		UNIQUE="$(grep '< unique.cmd' st.cmd)"
+		if [ -z "$UNIQUE" ]; then
+		    sed '/< envPaths/a < unique.cmd' st.cmd > temp
+		    mv temp st.cmd
+		fi
+		hasEnv="$(grep 'epicsEnvSet(' st.cmd)"
+		if ! [ -z "$hasEnv" ]; then
+		    grep 'epicsEnvSet(' st.cmd | while read line; do
+			echo $line >> unique.cmd
+		    done
+		fi
+		grep -v 'epicsEnvSet(' st.cmd > temp
+		mv temp st.cmd
+		echo done.
 	    fi
+	    cd $HOME
 	    echo Name of AD plugin to add:
 	    read PLUGIN
 	done
