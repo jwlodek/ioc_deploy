@@ -48,7 +48,7 @@ if ! [ -z $TARGET ]; then
 	# CORE="$(ls $DETECTOR | grep -m 1 ADCore)"
 	# if ! [ -z $CORE ]; then
 	        # echo copying $CORE...
-	        # mkdir -p $TARGET/areaDetector/$CORE/ADApp
+	        # mkdir -p $AD_DIR/$CORE/ADApp
 	        # cp -r -n $DETECTOR/$CORE/bin $AD_DIR/$CORE
 	        # cp -r -n $DETECTOR/$CORE/lib $AD_DIR/$CORE
  	        # cp -r -n $DETECTOR/$CORE/db $AD_DIR/$CORE
@@ -186,6 +186,7 @@ if ! [ -z $TARGET ]; then
 	    echo Not found.
 	fi
 
+	
 	echo creating envPaths file...
 	cd $TARGET/$ASYN
 	ASYN_DIR="$(pwd)"
@@ -251,7 +252,7 @@ if ! [ -z $TARGET ]; then
 	echo "This deployment of areaDetector was created by absoluteFullDeploy.sh" > README.txt
 	echo "from https://github.com/rollandmichae7/ioc_deploy" >> README.txt
 	echo >> README.txt
-	echo "To use this deployment wit an IOC, copy the envPaths file" >> README.txt
+	echo "To use this deployment with an IOC, copy the envPaths file" >> README.txt
 	echo "from this directory into the IOC's directory and fill in" >> README.txt 
 	echo "the 3 required plugin-dependent variables in the file." >> README.txt
 	echo "For plugins that use st.cmd.linux and st.cmd.windows," >> README.txt
@@ -295,29 +296,6 @@ if ! [ -z $TARGET ]; then
 		# cp -r -n $DETECTOR/$PLUGIN/lib $AD_DIR/$PLUGIN
 		# cp -r -n $DETECTOR/$PLUGIN/$APP/Db $AD_DIR/$PLUGIN/$APP
 		# cp -r -n $DETECTOR/$PLUGIN/$APP/op $AD_DIR/$PLUGIN/$APP
-		echo done.
-
-		echo making envPaths file...		
-		cd $AD_DIR/$PLUGIN
-		PLUG_ABSPATH=$(pwd)
-		cd $HOME
-		IOC_DIR="$(ls -d1 $PLUG_ABSPATH/iocs/** | grep -m 1 IOC)" # iocs/prosilicaIOC
-		IOC_DIR="$(ls -d1 $IOC_DIR/iocBoot/** | grep -m 1 ioc)" # iocBoot/iocProsilica
-		cd $TARGET
-		cp envPaths $IOC_DIR
-		cd $IOC_DIR
-		TOP="../.."
-		PLUGIN_UPPER="$(echo $PLUGIN | tr a-z A-Z)"
-		echo epicsEnvSet\(\"IOC\", \"ioc$PLUGIN\"\) >> envPaths
-		echo epicsEnvSet\(\"TOP\", \"$TOP\"\) >> envPaths
-		echo epicsEnvSet\(\"$PLUGIN_UPPER\", \"$TOP/../..\"\) >> envPaths
-		cp envPaths envPaths.linux
-		cp envPaths envPaths.windows
-		cp st.cmd OLD_st.cmd
-		ENV="$(grep -m 1 '< envPaths' st.cmd)"
-		if [ -z "$ENV" ]; then
-		    sed -i '1i< envPaths' st.cmd
-		fi
 		echo done.
 	    fi
 	    if [ "$CHOICE" = "$2" ]; then
