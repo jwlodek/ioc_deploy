@@ -7,9 +7,6 @@ TARGET=
 BASE=
 DETECTOR=
 SUPPORT=
-# if set, will replace the prefix for every IOC added
-# else, prefix is prompted for for each IOC added
-PREFIX_OVERRIDE=
 
 if [ -z $BASE ] || ! [ -d $BASE ]; then
     echo Invalid EPICS base path. Exiting
@@ -30,10 +27,6 @@ if ! [ -z $1 ]; then
     TARGET=$1
 fi
 
-if ! [ -z $2 ]; then
-    PREFIX_OVERRIDE=$2
-fi
-
 if ! [ -z $TARGET ]; then
 	mkdir -p $TARGET
 
@@ -43,6 +36,7 @@ if ! [ -z $TARGET ]; then
 	AD_DIR="$(echo ${PWD##*/})"
 	cd $HOME
 	mkdir -p $TARGET/$AD_DIR
+	AD_DIR=$TARGET/$AD_DIR
 
 	cd $BASE
 	BASE_DIR="$(echo ${PWD##*/})"
@@ -54,38 +48,38 @@ if ! [ -z $TARGET ]; then
 	# CORE="$(ls $DETECTOR | grep -m 1 ADCore)"
 	# if ! [ -z $CORE ]; then
 	        # echo copying $CORE...
-	        # mkdir -p $TARGET/$AD_DIR/$CORE/ADApp
-	        # cp -r -n $DETECTOR/$CORE/bin $TARGET/$AD_DIR/$CORE
-	        # cp -r -n $DETECTOR/$CORE/lib $TARGET/$AD_DIR/$CORE
- 	        # cp -r -n $DETECTOR/$CORE/db $TARGET/$AD_DIR/$CORE
-	        # cp -r -n $DETECTOR/$CORE/documentation $TARGET/$AD_DIR/$CORE
-	        # cp -r -n $DETECTOR/$CORE/iocBoot $TARGET/$AD_DIR/$CORE
-	        # cp -r -n $DETECTOR/$CORE/Viewers $TARGET/$AD_DIR/$CORE
-	        # cp -r -n $DETECTOR/$CORE/ADApp/Db $TARGET/$AD_DIR/$CORE/ADApp
-	        # cp -r -n $DETECTOR/$CORE/ADApp/op $TARGET/$AD_DIR/$CORE/ADApp
+	        # mkdir -p $TARGET/areaDetector/$CORE/ADApp
+	        # cp -r -n $DETECTOR/$CORE/bin $AD_DIR/$CORE
+	        # cp -r -n $DETECTOR/$CORE/lib $AD_DIR/$CORE
+ 	        # cp -r -n $DETECTOR/$CORE/db $AD_DIR/$CORE
+	        # cp -r -n $DETECTOR/$CORE/documentation $AD_DIR/$CORE
+	        # cp -r -n $DETECTOR/$CORE/iocBoot $AD_DIR/$CORE
+	        # cp -r -n $DETECTOR/$CORE/Viewers $AD_DIR/$CORE
+	        # cp -r -n $DETECTOR/$CORE/ADApp/Db $AD_DIR/$CORE/ADApp
+	        # cp -r -n $DETECTOR/$CORE/ADApp/op $AD_DIR/$CORE/ADApp
 	# else
 	        # echo Not found
 	# fi
 
 	echo copying ADCore...
-	mkdir -p $TARGET/$AD_DIR/ADCore/ADApp
-	cp -r -n $DETECTOR/ADCore/bin $TARGET/$AD_DIR/ADCore
-	cp -r -n $DETECTOR/ADCore/lib $TARGET/$AD_DIR/ADCore
-	cp -r -n $DETECTOR/ADCore/db $TARGET/$AD_DIR/ADCore
-	cp -r -n $DETECTOR/ADCore/documentation $TARGET/$AD_DIR/ADCore
-	cp -r -n $DETECTOR/ADCore/iocBoot $TARGET/$AD_DIR/ADCore
-	cp -r -n $DETECTOR/ADCore/Viewers $TARGET/$AD_DIR/ADCore
-	cp -r -n $DETECTOR/ADCore/ADApp/Db $TARGET/$AD_DIR/ADCore/ADApp
-	cp -r -n $DETECTOR/ADCore/ADApp/op $TARGET/$AD_DIR/ADCore/ADApp
+	mkdir -p $AD_DIR/ADCore/ADApp
+	cp -r -n $DETECTOR/ADCore/bin $AD_DIR/ADCore
+	cp -r -n $DETECTOR/ADCore/lib $AD_DIR/ADCore
+	cp -r -n $DETECTOR/ADCore/db $AD_DIR/ADCore
+	cp -r -n $DETECTOR/ADCore/documentation $AD_DIR/ADCore
+	cp -r -n $DETECTOR/ADCore/iocBoot $AD_DIR/ADCore
+	cp -r -n $DETECTOR/ADCore/Viewers $AD_DIR/ADCore
+	cp -r -n $DETECTOR/ADCore/ADApp/Db $AD_DIR/ADCore/ADApp
+	cp -r -n $DETECTOR/ADCore/ADApp/op $AD_DIR/ADCore/ADApp
 
 	echo looking for ADSupport...
 	ADSUPPORT="$(ls $DETECTOR | grep -m 1 ADSupport)"
 	if ! [ -z $ADSUPPORT ]; then
 	    echo copying $ADSUPPORT...
-	    mkdir -p $TARGET/$AD_DIR/$ADSUPPORT
-	    cp -r -n $DETECTOR/$ADSUPPORT/bin $TARGET/$AD_DIR/$ADSUPPORT
-	    cp -r -n $DETECTOR/$ADSUPPORT/lib $TARGET/$AD_DIR/$ADSUPPORT
-	    cp -r -n $DETECTOR/$ADSUPPORT/supportApp $TARGET/$AD_DIR/$ADSUPPORT
+	    mkdir -p $AD_DIR/$ADSUPPORT
+	    cp -r -n $DETECTOR/$ADSUPPORT/bin $AD_DIR/$ADSUPPORT
+	    cp -r -n $DETECTOR/$ADSUPPORT/lib $AD_DIR/$ADSUPPORT
+	    cp -r -n $DETECTOR/$ADSUPPORT/supportApp $AD_DIR/$ADSUPPORT
 	    echo done.
 	else
 	    echo Not found.
@@ -192,33 +186,70 @@ if ! [ -z $TARGET ]; then
 	    echo Not found.
 	fi
 
-	
 	echo creating envPaths file...
-	BACK="../../../../../.."
+	cd $TARGET/$ASYN
+	ASYN_DIR="$(pwd)"
+	cd $HOME
+	cd $TARGET/$BUSY
+	BUSY_DIR="$(pwd)"
+	cd $HOME
+	cd $TARGET/$SAVE
+	SAVE_DIR="$(pwd)"
+	cd $HOME
+	cd $TARGET/$CALC
+	CALC_DIR="$(pwd)"
+	cd $HOME
+	cd $TARGET/$SEQ
+	SEQ_DIR="$(pwd)"
+	cd $HOME
+	cd $TARGET/$SCAN
+	SCAN_DIR="$(pwd)"
+	cd $HOME
+	if ! [ -z $STATS ]; then
+	    cd $TARGET/$STATS
+	    STATS_DIR="$(pwd)"
+	    cd $HOME
+	else
+	    cd $TARGET/$DSTATS
+	    STATS_DIR="$(pwd)"
+	    cd $HOME
+	fi
+	cd $TARGET
+	SUPPORT_DIR="$(pwd)"
+	cd $HOME
+	cd $AD_DIR
+	AD_DIR="$(pwd)"
+	cd $HOME
+	cd $TARGET/$BASE_DIR
+        BASE_DIR="$(pwd)"
+	
+	cd $HOME
 	cd $TARGET
 	echo \# put this file in IOC folders to use this deployment. > envPaths
 	echo \# plugins added with [absolute]fullDeploy.sh will automatically have this file with appropriate paths copied in. >> envPaths
 	echo >> envPaths
-	echo epicsEnvSet\(\"SUPPORT\", \"$BACK\"\) >> envPaths
-	echo epicsEnvSet\(\"ASYN\", \"$BACK/$ASYN\"\) >> envPaths
-	echo epicsEnvSet\(\"AREA_DETECTOR\", \"$BACK/$AD_DIR\"\) >> envPaths
-	echo epicsEnvSet\(\"ADSUPPORT\", \"$BACK/$AD_DIR/$ADSUPPORT\"\) >> envPaths
-	echo epicsEnvSet\(\"ADCORE\", \"$BACK/$AD_DIR/ADCore\"\) >> envPaths
-	echo epicsEnvSet\(\"AUTOSAVE\", \"$BACK/$SAVE\"\) >> envPaths
-	echo epicsEnvSet\(\"BUSY\", \"$BACK/$BUSY\"\) >> envPaths
-	echo epicsEnvSet\(\"CALC\", \"$BACK/$CALC\"\) >> envPaths
-	echo epicsEnvSet\(\"SNSEQ\", \"$BACK/$SEQ\"\) >> envPaths
-	echo epicsEnvSet\(\"SSCAN\", \"$BACK/$SCAN\"\) >> envPaths
-	echo epicsEnvSet\(\"DEVIOCSTATS\", \"$BACK/$STATS\"\) >> envPaths
-	echo epicsEnvSet\(\"EPICS_BASE\", \"$BACK/$BASE_DIR\"\) >> envPaths
+	echo epicsEnvSet\(\"SUPPORT\", \"$SUPPORT_DIR\"\) >> envPaths
+	echo epicsEnvSet\(\"ASYN\", \"$ASYN_DIR\"\) >> envPaths
+	echo epicsEnvSet\(\"AREA_DETECTOR\", \"$AD_DIR\"\) >> envPaths
+	echo epicsEnvSet\(\"ADSUPPORT\", \"$AD_DIR/$ADSUPPORT\"\) >> envPaths
+	echo epicsEnvSet\(\"ADCORE\", \"$AD_DIR/ADCore\"\) >> envPaths
+	echo epicsEnvSet\(\"AUTOSAVE\", \"$SAVE_DIR\"\) >> envPaths
+	echo epicsEnvSet\(\"BUSY\", \"$BUSY_DIR\"\) >> envPaths
+	echo epicsEnvSet\(\"CALC\", \"$CALC_DIR\"\) >> envPaths
+	echo epicsEnvSet\(\"SNSEQ\", \"$SEQ_DIR\"\) >> envPaths
+	echo epicsEnvSet\(\"SSCAN\", \"$SCAN_DIR\"\) >> envPaths
+	echo epicsEnvSet\(\"DEVIOCSTATS\", \"$STATS_DIR\"\) >> envPaths
+	echo epicsEnvSet\(\"EPICS_BASE\", \"$BASE_DIR\"\) >> envPaths
 	echo \# epicsEnvSet\(\"TOP\", \"\<path to plugin/iocs/pluginIOC\>\"\) >> envPaths
 	echo \# epicsEnvSet\(\"IOC\", \"\<iocPlugin\>\"\) >> envPaths
 	echo \# epicsEnvSet\(\"\<PLUGIN_NAME\>\", \"\<path to plugin\>\"\) >> envPaths
+	cd $HOME
 	echo done.
 
 	
-	echo making README...
-	echo "This deployment of areaDetector was created by fullDeploy.sh" > README.txt
+	echo creating README...
+	cd $TARGET
+	echo "This deployment of areaDetector was created by absoluteFullDeploy.sh" > README.txt
 	echo "from https://github.com/rollandmichae7/ioc_deploy" >> README.txt
 	echo >> README.txt
 	echo "To use IOCs with this deployment, copy the envPaths file" >> README.txt
@@ -229,14 +260,23 @@ if ! [ -z $TARGET ]; then
 	echo "according to to your architecture." >> README.txt
 	echo "Any plugin added during the running of the script" >> README.txt
 	echo "will already have envPaths configured." >> README.txt
+	echo >> README.txt
+	echo "WARNING: envPaths uses absolute paths based on the location" >> README.txt
+	echo "of this deployment's initial creation. These will break if this" >> README.txt
+	echo "deployment is moved, and the IOC will not work." >> README.txt
+	echo "If this deployment is moved, envPaths MUST be updated." >> README.txt
+	cd $HOME
 	echo done.
 
-	cd $HOME
-	
-	echo Enter name of an AD plugin to add or \"done\" to exit:
-	read PLUGIN
-	while ! [ $PLUGIN = done ]; do
-	    PLUGIN="$(ls $DETECTOR | grep -m 1 $PLUGIN)"
+
+	if ! [ -z "$2" ]; then
+	    CHOICE=$2
+	else
+	    echo Enter name of an AD plugin to add or \"done\" to exit:
+	    read CHOICE
+	fi
+	while ! [ $CHOICE = done ]; do
+	    PLUGIN="$(ls $DETECTOR | grep -m 1 $CHOICE)"
 	    if [ -z "$PLUGIN" ]; then
 		echo Invalid plugin name.
 	    else
@@ -245,86 +285,27 @@ if ! [ -z $TARGET ]; then
 		cd $DETECTOR
 		AD_DIR="$(echo ${PWD##*/})"
 		cd $HOME
-		mkdir -p $TARGET/$AD_DIR/$PLUGIN/$APP
-		cp -r -n $DETECTOR/$PLUGIN/bin $TARGET/$AD_DIR/$PLUGIN
-		cp -r -n $DETECTOR/$PLUGIN/db $TARGET/$AD_DIR/$PLUGIN
-		cp -r -n $DETECTOR/$PLUGIN/documentation $TARGET/$AD_DIR/$PLUGIN
-		cp -r -n $DETECTOR/$PLUGIN/iocs $TARGET/$AD_DIR/$PLUGIN
-		cp -r -n $DETECTOR/$PLUGIN/lib $TARGET/$AD_DIR/$PLUGIN
-		cp -r -n $DETECTOR/$PLUGIN/$APP/Db $TARGET/$AD_DIR/$PLUGIN/$APP
-		cp -r -n $DETECTOR/$PLUGIN/$APP/op $TARGET/$AD_DIR/$PLUGIN/$APP
+		AD_DIR=$TARGET/$AD_DIR
+		IOC="$(ls $DETECTOR/$PLUGIN/iocs | grep IOC)"
+      		mkdir -p $AD_DIR/$PLUGIN/iocs/$IOC
+		# cp -r -n $DETECTOR/$PLUGIN/bin $AD_DIR/$PLUGIN
+		cp -r -n $DETECTOR/$PLUGIN/db $AD_DIR/$PLUGIN
+		# cp -r -n $DETECTOR/$PLUGIN/documentation $AD_DIR/$PLUGIN
+		cp -r -n $DETECTOR/$PLUGIN/iocs/$IOC/bin $AD_DIR/$PLUGIN/iocs/$IOC
+		cp -r -n $DETECTOR/$PLUGIN/iocs/$IOC/dbd $AD_DIR/$PLUGIN/iocs/$IOC
+		cp -r -n $DETECTOR/$PLUGIN/iocs/$IOC/iocBoot $AD_DIR/$PLUGIN/iocs/$IOC
+		# cp -r -n $DETECTOR/$PLUGIN/iocs $AD_DIR/$PLUGIN
+		# cp -r -n $DETECTOR/$PLUGIN/lib $AD_DIR/$PLUGIN
+		# cp -r -n $DETECTOR/$PLUGIN/$APP/Db $AD_DIR/$PLUGIN/$APP
+		# cp -r -n $DETECTOR/$PLUGIN/$APP/op $AD_DIR/$PLUGIN/$APP
 		echo done.
-
-		echo making envPaths file...		
-		cd $TARGET/$AD_DIR/$PLUGIN
-		PLUG_ABSPATH=$(pwd)
-		cd $HOME
-		IOC_DIR="$(ls -d1 $PLUG_ABSPATH/iocs/** | grep -m 1 IOC)" # iocs/prosilicaIOC
-		IOC_DIR="$(ls -d1 $IOC_DIR/iocBoot/** | grep -m 1 ioc)" # iocBoot/iocProsilica
-		cd $TARGET
-		cp envPaths $IOC_DIR
-		cd $IOC_DIR
-		TOP="../.."
-		PLUGIN_UPPER="$(echo $PLUGIN | tr a-z A-Z)"
-		echo epicsEnvSet\(\"IOC\", \"ioc$PLUGIN\"\) >> envPaths
-	        echo epicsEnvSet\(\"TOP\", \"$TOP\"\) >> envPaths
-		echo epicsEnvSet\(\"$PLUGIN_UPPER\", \"$TOP/../..\"\) >> envPaths
-		cp envPaths envPaths.linux
-		cp envPaths envPaths.windows
-		cp st.cmd OLD_st.cmd
-		ENV="$(grep -m 1 '< envPaths' st.cmd)"
-		if [ -z "$ENV" ]; then
-		    sed -i '1i< envPaths' st.cmd
-		fi
-		echo done.
-
-		
-		if ! [ -z "$PREFIX_OVERRIDE" ]; then
-		    PREFIX=$PREFIX_OVERRIDE
-		else
-		    echo Enter prefix to use for this IOC:
-		    read PREFIX
-		fi
-		if ! [ -z "$PREFIX" ]; then
-		    echo changing prefix to $PREFIX...
-		    lineNum="$(grep -n epicsEnvSet\(\"PREFIX\" st.cmd | grep -m 1 -v "#" | grep -Eo '^[^:]+')"
-		    newLine="epicsEnvSet(\"PREFIX\", \"${PREFIX}\")"
-		    if ! [ -z "$lineNum" ]; then
-			sed -i "${lineNum}s/.*/${newLine}/" st.cmd
-		    else
-			sed -i "1i${newLine}" st.cmd
-		    fi
-		    echo done.
-		else
-		    echo Prefix left unchanged.
-		fi
-
-		
-		echo moving EPICS variable declarations to unique.cmd...
-		UNIQUE="$(ls | grep unique.cmd)"
-		if [ -z "$UNIQUE" ]; then
-		    echo \# EPICS variables extracted from OLD_st.cmd > unique.cmd
-		else
-		    echo \# EPICS variables extracted from OLD_st.cmd >> unique.cmd
-		fi
-		UNIQUE="$(grep '< unique.cmd' st.cmd)"
-		if [ -z "$UNIQUE" ]; then
-		    sed '/< envPaths/a < unique.cmd' st.cmd > temp
-		    mv temp st.cmd
-		fi
-		hasEnv="$(grep 'epicsEnvSet(' st.cmd)"
-		if ! [ -z "$hasEnv" ]; then
-		    grep 'epicsEnvSet(' st.cmd | while read line; do
-			echo $line >> unique.cmd
-		    done
-		fi
-		grep -v 'epicsEnvSet(' st.cmd > temp
-		mv temp st.cmd
-		echo done.
+	    fi
+	    if [ "$CHOICE" = "$2" ]; then
+		exit 1
 	    fi
 	    cd $HOME
 	    echo Name of AD plugin to add:
-	    read PLUGIN
+	    read CHOICE
 	done
 else
     echo Invalid TARGET. Did you set one?

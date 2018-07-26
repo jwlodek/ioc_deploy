@@ -1,0 +1,66 @@
+echo making envPaths file...		
+cd $TARGET/$AD_DIR/$PLUGIN
+PLUG_ABSPATH=$(pwd)
+cd $HOME
+IOC_DIR="$(ls -d1 $PLUG_ABSPATH/iocs/** | grep -m 1 IOC)" # iocs/prosilicaIOC
+IOC_DIR="$(ls -d1 $IOC_DIR/iocBoot/** | grep -m 1 ioc)" # iocBoot/iocProsilica
+cd $TARGET
+cp envPaths $IOC_DIR
+cd $IOC_DIR
+TOP="../.."
+PLUGIN_UPPER="$(echo $PLUGIN | tr a-z A-Z)"
+echo epicsEnvSet\(\"IOC\", \"ioc$PLUGIN\"\) >> envPaths
+echo epicsEnvSet\(\"TOP\", \"$TOP\"\) >> envPaths
+echo epicsEnvSet\(\"$PLUGIN_UPPER\", \"$TOP/../..\"\) >> envPaths
+cp envPaths envPaths.linux
+cp envPaths envPaths.windows
+cp st.cmd OLD_st.cmd
+ENV="$(grep -m 1 '< envPaths' st.cmd)"
+if [ -z "$ENV" ]; then
+    sed -i '1i< envPaths' st.cmd
+fi
+echo done.
+
+
+if ! [ -z "$PREFIX_OVERRIDE" ]; then
+    PREFIX=$PREFIX_OVERRIDE
+else
+    echo Enter prefix to use for this IOC:
+    read PREFIX
+fi
+if ! [ -z "$PREFIX" ]; then
+    echo changing prefix to $PREFIX...
+    lineNum="$(grep -n epicsEnvSet\(\"PREFIX\" st.cmd | grep -m 1 -v "#" | grep -Eo '^[^:]+')"
+    newLine="epicsEnvSet(\"PREFIX\", \"${PREFIX}\")"
+    if ! [ -z "$lineNum" ]; then
+	sed -i "${lineNum}s/.*/${newLine}/" st.cmd
+    else
+	sed -i "1i${newLine}" st.cmd
+    fi
+    echo done.
+else
+    echo Prefix left unchanged.
+fi
+
+
+echo moving EPICS variable declarations to unique.cmd...
+UNIQUE="$(ls | grep unique.cmd)"
+if [ -z "$UNIQUE" ]; then
+    echo \# EPICS variables extracted from OLD_st.cmd > unique.cmd
+else
+    echo \# EPICS variables extracted from OLD_st.cmd >> unique.cmd
+fi
+UNIQUE="$(grep '< unique.cmd' st.cmd)"
+if [ -z "$UNIQUE" ]; then
+    sed '/< envPaths/a < unique.cmd' st.cmd > temp
+    mv temp st.cmd
+fi
+hasEnv="$(grep 'epicsEnvSet(' st.cmd)"
+if ! [ -z "$hasEnv" ]; then
+    grep 'epicsEnvSet(' st.cmd | while read line; do
+	echo $line >> unique.cmd
+    done
+fi
+grep -v 'epicsEnvSet(' st.cmd > temp
+mv temp st.cmd
+echo done.
