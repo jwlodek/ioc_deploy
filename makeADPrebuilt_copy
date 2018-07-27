@@ -32,15 +32,19 @@ HOME=$(pwd)
 cp components/prebuilt_unique.cmd $SUPPORT/$AREA_DETECTOR/$1/iocs/*IOC/iocBoot/ioc*
 cp components/prebuilt_config $SUPPORT/$AREA_DETECTOR/$1/iocs/*IOC/iocBoot/ioc*
 
-cd $SUPPORT/$AREA_DETECTOR/$1/iocs/*IOC
+cd $SUPPORT/
 IOC=$(pwd)
-
 cd $HOME
 
 cd $SUPPORT/$AREA_DETECTOR/$1/*/Db/..
 APP=$(pwd)
-
 cd $HOME
+
+cd $DESTINATION
+DESTINATION=$(pwd)
+cd $HOME
+
+cd $SUPPORT
 
 tar czf $DESTINATION.tgz \
 --ignore-failed-read \
@@ -64,6 +68,12 @@ $AREA_DETECTOR/$1/db \
 $AREA_DETECTOR/$1/bin/$3 \
 $AREA_DETECTOR/$1/lib/$3 \
 $AREA_DETECTOR/$1/documentation \
+$AREA_DETECTOR/$1/iocs/*IOC/bin/$3 \
+$AREA_DETECTOR/$1/iocs/*IOC/lib/$3 \
+$AREA_DETECTOR/$1/iocs/*IOC/dbd \
+$AREA_DETECTOR/$1/iocs/*IOC/iocBoot \
+$AREA_DETECTOR/$1/*/Db \
+$AREA_DETECTOR/$1/*/op \
 $ASYN/opi \
 $ASYN/db \
 $ASYN/bin/$3 \
@@ -90,13 +100,6 @@ $SSCAN/sscanApp/Db \
 $SSCAN/sscanApp/op \
 $SSCAN/bin/$3 \
 $SSCAN/lib/$3 \
---directory / \
-$IOC/bin/$3 \
-$IOC/lib/$3 \
-$IOC/dbd \
-$IOC/iocBoot \
-$APP/Db \
-$APP/op \
 
 rm -f $DESTINATION.zip
 cd $BASE_TOP
@@ -117,13 +120,13 @@ $AREA_DETECTOR/ADSupport/lib/$3 \
 $AREA_DETECTOR/$1/db \
 $AREA_DETECTOR/$1/bin/$3 \
 $AREA_DETECTOR/$1/lib/$3 \
-$APP/Db \
-$APP/op \
 $AREA_DETECTOR/$1/documentation \
-$IOC/bin/$3 \
-$IOC/lib/$3 \
-$IOC/dbd \
-$IOC/iocBoot \
+$AREA_DETECTOR/$1/iocs/*IOC/bin/$3 \
+$AREA_DETECTOR/$1/iocs/*IOC/lib/$3 \
+$AREA_DETECTOR/$1/iocs/*IOC/dbd \
+$AREA_DETECTOR/$1/iocs/*IOC/iocBoot \
+$AREA_DETECTOR/$1/*/Db \
+$AREA_DETECTOR/$1/*/op \
 $ASYN/opi \
 $ASYN/db \
 $ASYN/bin/$3 \
