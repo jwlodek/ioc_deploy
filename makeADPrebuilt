@@ -13,18 +13,18 @@ find . -name 'auto_settings.savB*' -exec rm -fv {} \;
 find . -name 'core.*' -exec rm -fv {} \;
 find . -name '*.exe.*' -exec rm -fv {} \;
 
-AREA_DETECTOR=areaDetector-master
-ASYN=asyn
-AUTOSAVE=autosave
-BUSY=busy
-CALC=calc
-DEVIOCSTATS=iocStats
+AREA_DETECTOR=areaDetector-3-2
+ASYN=asyn-4-33
+AUTOSAVE=autosave-5-9
+BUSY=busy-1-7
+CALC=calc-3-7
+DEVIOCSTATS=iocStats-3-1-15
 SEQ=seq-2-2-5
-SSCAN=sscan
+SSCAN=sscan-2-11-1
 BASE_TOP=/epics
-BASE=base-7.0.1.1
-SUPPORT=/home/mrolland/Documents/epics/synAppsRelease/synApps/support
-DESTINATION=$1/$1_Prebuilt_$AREA_DETECTOR_$2_$3
+BASE=base-7-0-1-1
+SUPPORT=/epics/synApps/support
+DESTINATION=../$1_Prebuilt_$AREA_DETECTOR_$2_$3
 
 mkdir -p $DESTINATION
 HOME=$(pwd)
@@ -84,5 +84,42 @@ cp --parents -r -n $SSCAN/sscanApp/op $DESTINATION
 cp --parents -r -n $SSCAN/bin/$3 $DESTINATION
 cp --parents -r -n $SSCAN/lib/$3 $DESTINATION
 cd $HOME
-cp components/prebuilt_unique.cmd $DESTINATION/$AREA_DETECTOR/$1/iocs/*IOC/iocBoot/ioc*
-cp components/prebuilt_config $DESTINATION/$AREA_DETECTOR/$1/iocs/*IOC/iocBoot/ioc*
+
+
+wasPrebuilt=$(ls $DESTINATION/$AREA_DETECTOR/$1/iocs/*IOC/iocBoot/ioc* | grep prebuilt_unique.cmd)
+# if [ -z "$wasPrebuilt" ]; then
+    cp -n components/prebuilt_unique.cmd $DESTINATION/$AREA_DETECTOR/$1/iocs/*IOC/iocBoot/ioc*
+    cp -n components/prebuilt_config $DESTINATION/$AREA_DETECTOR/$1/iocs/*IOC/iocBoot/ioc*
+    cd $DESTINATION/$AREA_DETECTOR/$1/iocs/*IOC/iocBoot/ioc*
+    echo moving EPICS variable declarations to prebuilt_unique.cmd...
+    echo >> prebuilt_unique.cmd
+    echo \# additional EPICS variables extracted from st.cmd >> prebuilt_unique.cmd
+    UNIQUE="$(grep '< unique.cmd' st.cmd)"
+    if [ -z "$UNIQUE" ]; then
+	env=$(grep '< envPaths' st.cmd)
+	if ! [ -z "$env" ]; then
+	    sed -i '/< envPaths/a < prebuilt_unique.cmd' st.cmd
+	else
+	    sed -i "1i< prebuilt_unique.cmd" st.cmd
+	fi
+    fi
+    hasEnv="$(grep 'epicsEnvSet(' st.cmd)"
+    if ! [ -z "$hasEnv" ]; then
+	grep 'epicsEnvSet(' st.cmd | while read line; do
+	    var=$(echo $line | cut -d \" -f 2)
+	    echo var: $var
+	    varLineNum=$(grep -n -m 1 $var prebuilt_unique.cmd | grep -Eo '^[^:]+')
+	    isComment=$(echo $line | grep \#)
+	    if ! [ -z "$varLineNum" ] && [ -z "$isComment" ]; then
+		oldLine=$(sed "${varLineNum}q;d" prebuilt_unique.cmd)
+		sed -i "${varLineNum}s/$oldLine/$line/" prebuilt_unique.cmd
+	    else
+		echo $line >> prebuilt_unique.cmd
+	    fi
+	done
+    fi
+    grep -v 'epicsEnvSet(' st.cmd > temp
+    mv temp st.cmd
+    sed -i '1i# all epicsEnvSet calls moved to prebuilt_unique.cmd' st.cmd
+    echo done.
+# fi

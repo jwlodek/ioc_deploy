@@ -18,6 +18,7 @@
 # epicsEnvSet("NCHANS", 		   "")
 # epicsEnvSet("HIST_SIZE", 		   "")
 # epicsEnvSet("XSIZE", 			   "")
+# epicsEnvSet("YSIZE",			   "")
 # epicsEnvSet("NELMT", 			   "")
 # epicsEnvSet("NDTYPE", 		   "")
 # epicsEnvSet("NDFTVL", 		   "")
