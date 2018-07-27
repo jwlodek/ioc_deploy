@@ -1,0 +1,5 @@
+NAME=
+USER=softioc
+PORT=
+HOST=
+#EXEC=$CHDIR/st.cmd
