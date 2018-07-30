@@ -27,7 +27,8 @@ BASE=base-7-0-1-1
 SUPPORT=/epics/synApps/support
 DESTINATION=../$1_$2_Prebuilt_$3
 
-mkdir -p $DESTINATION/temp
+mkdir -p $DESTINATION
+mkdir -p temp
 
 HOME=$(pwd)
 cd $SUPPORT
@@ -51,57 +52,57 @@ BASE_VER=$(git describe --tags)
 cd $DESTINATION
 echo $BASE : $BASE_VER >> README.txt
 cd $SUPPORT
-cp --parents -r -n $AREA_DETECTOR/ADCore/db $DESTINATION/temp
-cp --parents -r -n $AREA_DETECTOR/ADCore/documentation $DESTINATION/temp
-cp --parents -r -n $AREA_DETECTOR/ADCore/ADApp/Db $DESTINATION/temp
-cp --parents -r -n $AREA_DETECTOR/ADCore/ADApp/op $DESTINATION/temp
-cp --parents -r -n $AREA_DETECTOR/ADCore/iocBoot $DESTINATION/temp
-cp --parents -r -n $AREA_DETECTOR/ADViewers/ImageJ $DESTINATION/temp
-cp --parents -r -n $AREA_DETECTOR/ADCore/bin/$3 $DESTINATION/temp
-cp --parents -r -n $AREA_DETECTOR/ADCore/lib/$3 $DESTINATION/temp
-cp --parents -r -n $AREA_DETECTOR/ADSupport/bin/$3 $DESTINATION/temp
-cp --parents -r -n $AREA_DETECTOR/ADSupport/lib/$3 $DESTINATION/temp
-cp --parents -r -n $ASYN/opi $DESTINATION/temp
-cp --parents -r -n $ASYN/db $DESTINATION/temp
-cp --parents -r -n $ASYN/bin/$3 $DESTINATION/temp
-cp --parents -r -n $ASYN/lib/$3 $DESTINATION/temp
-cp --parents -r -n $AUTOSAVE/asApp/ $DESTINATION/temp
-cp --parents -r -n $AUTOSAVE/asApp/op $DESTINATION/temp
-cp --parents -r -n $AUTOSAVE/bin/$3 $DESTINATION/temp
-cp --parents -r -n $AUTOSAVE/lib/$3 $DESTINATION/temp
-cp --parents -r -n $BUSY/busyApp/Db $DESTINATION/temp
-cp --parents -r -n $BUSY/busyApp/op $DESTINATION/temp
-cp --parents -r -n $BUSY/bin/$3 $DESTINATION/temp
-cp --parents -r -n $BUSY/lib/$3 $DESTINATION/temp
-cp --parents -r -n $CALC/calcApp/Db $DESTINATION/temp
-cp --parents -r -n $CALC/calcApp/ $DESTINATION/temp
-cp --parents -r -n $CALC/bin/$3 $DESTINATION/temp
-cp --parents -r -n $CALC/lib/$3 $DESTINATION/temp
-cp --parents -r -n $DEVIOCSTATS/db $DESTINATION/temp
-cp --parents -r -n $DEVIOCSTATS/op/adl $DESTINATION/temp
-cp --parents -r -n $DEVIOCSTATS/bin/$3 $DESTINATION/temp
-cp --parents -r -n $DEVIOCSTATS/lib/$3 $DESTINATION/temp
-cp --parents -r -n $SEQ/bin/$3 $DESTINATION/temp
-cp --parents -r -n $SEQ/lib/$3 $DESTINATION/temp
-cp --parents -r -n $SSCAN/sscanApp/Db $DESTINATION/temp
-cp --parents -r -n $SSCAN/sscanApp/op $DESTINATION/temp
-cp --parents -r -n $SSCAN/bin/$3 $DESTINATION/temp
-cp --parents -r -n $SSCAN/lib/$3 $DESTINATION/temp
+cp --parents -r -n $AREA_DETECTOR/ADCore/db $HOME/temp
+cp --parents -r -n $AREA_DETECTOR/ADCore/documentation $HOME/temp
+cp --parents -r -n $AREA_DETECTOR/ADCore/ADApp/Db $HOME/temp
+cp --parents -r -n $AREA_DETECTOR/ADCore/ADApp/op $HOME/temp
+cp --parents -r -n $AREA_DETECTOR/ADCore/iocBoot $HOME/temp
+cp --parents -r -n $AREA_DETECTOR/ADViewers/ImageJ $HOME/temp
+cp --parents -r -n $AREA_DETECTOR/ADCore/bin/$3 $HOME/temp
+cp --parents -r -n $AREA_DETECTOR/ADCore/lib/$3 $HOME/temp
+cp --parents -r -n $AREA_DETECTOR/ADSupport/bin/$3 $HOME/temp
+cp --parents -r -n $AREA_DETECTOR/ADSupport/lib/$3 $HOME/temp
+cp --parents -r -n $ASYN/opi $HOME/temp
+cp --parents -r -n $ASYN/db $HOME/temp
+cp --parents -r -n $ASYN/bin/$3 $HOME/temp
+cp --parents -r -n $ASYN/lib/$3 $HOME/temp
+cp --parents -r -n $AUTOSAVE/asApp/ $HOME/temp
+cp --parents -r -n $AUTOSAVE/asApp/op $HOME/temp
+cp --parents -r -n $AUTOSAVE/bin/$3 $HOME/temp
+cp --parents -r -n $AUTOSAVE/lib/$3 $HOME/temp
+cp --parents -r -n $BUSY/busyApp/Db $HOME/temp
+cp --parents -r -n $BUSY/busyApp/op $HOME/temp
+cp --parents -r -n $BUSY/bin/$3 $HOME/temp
+cp --parents -r -n $BUSY/lib/$3 $HOME/temp
+cp --parents -r -n $CALC/calcApp/Db $HOME/temp
+cp --parents -r -n $CALC/calcApp/ $HOME/temp
+cp --parents -r -n $CALC/bin/$3 $HOME/temp
+cp --parents -r -n $CALC/lib/$3 $HOME/temp
+cp --parents -r -n $DEVIOCSTATS/db $HOME/temp
+cp --parents -r -n $DEVIOCSTATS/op/adl $HOME/temp
+cp --parents -r -n $DEVIOCSTATS/bin/$3 $HOME/temp
+cp --parents -r -n $DEVIOCSTATS/lib/$3 $HOME/temp
+cp --parents -r -n $SEQ/bin/$3 $HOME/temp
+cp --parents -r -n $SEQ/lib/$3 $HOME/temp
+cp --parents -r -n $SSCAN/sscanApp/Db $HOME/temp
+cp --parents -r -n $SSCAN/sscanApp/op $HOME/temp
+cp --parents -r -n $SSCAN/bin/$3 $HOME/temp
+cp --parents -r -n $SSCAN/lib/$3 $HOME/temp
 
 PLUGIN=$1
 while ! [ "$PLUGIN" = done ]; do
     EXISTS=$(ls $AREA_DETECTOR | grep $PLUGIN)
     if ! [ -z "$EXISTS" ]; then
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/db $DESTINATION/temp
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/bin/$3 $DESTINATION/temp
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/lib/$3 $DESTINATION/temp
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/documentation $DESTINATION/temp
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/bin/$3 $DESTINATION/temp
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/lib/$3 $DESTINATION/temp
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/dbd $DESTINATION/temp
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/iocBoot $DESTINATION/temp
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/*/Db $DESTINATION/temp
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/*/op $DESTINATION/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/db $HOME/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/bin/$3 $HOME/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/lib/$3 $HOME/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/documentation $HOME/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/bin/$3 $HOME/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/lib/$3 $HOME/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/dbd $HOME/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/iocBoot $HOME/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/*/Db $HOME/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/*/op $HOME/temp
 	cd $AREA_DETECTOR/$PLUGIN
 	PLUGIN_VER=$(git describe --tags)
 	cd $DESTINATION
@@ -143,11 +144,11 @@ echo $SEQ : $SEQ_VER >> README.txt
 
 cd $HOME
 echo tarring...
-tar -cjf $1_$2_Prebuilt_$3.tar.gz -C $DESTINATION/temp .
+tar -cjf $1_$2_Prebuilt_$3.tar.gz -C temp .
 echo done.
 
 mv $1_$2_Prebuilt_$3.tar.gz $DESTINATION
-rm -rf $DESTINATION/temp
+rm -rf temp
 
 end="$(date +%s)"
 time=$(($end-$start))
