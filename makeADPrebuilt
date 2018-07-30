@@ -45,8 +45,8 @@ echo >> README.txt
 cd $HOME
 
 cd $BASE_TOP
-cp --parents -r -n $BASE/bin/$3 $DESTINATION/temp
-cp --parents -r -n $BASE/lib/$3 $DESTINATION/temp
+cp --parents -r -n $BASE/bin/$3 $HOME/temp
+cp --parents -r -n $BASE/lib/$3 $HOME/temp
 cd $BASE
 BASE_VER=$(git describe --tags)
 cd $DESTINATION
