@@ -25,18 +25,31 @@ SSCAN=sscan-2-11-1
 BASE_TOP=/epics
 BASE=base-7-0-1-1
 SUPPORT=/epics/synApps/support
-DESTINATION=../$1_Prebuilt_$AREA_DETECTOR_$2_$3
+DESTINATION=../$1_$2_Prebuilt_$3
 
 mkdir -p $DESTINATION/temp
+
 HOME=$(pwd)
+cd $SUPPORT
+SUPPORT=$(pwd)
+cd $HOME
 
 cd $DESTINATION
 DESTINATION=$(pwd)
+echo $1_$2_Prebuilt_$3.tar.gz > README.txt
+echo >> README.txt
+echo Versions used in this deployment >> README.txt
+echo [folder name] : [git tag] >> README.txt
+echo >> README.txt
 cd $HOME
 
 cd $BASE_TOP
 cp --parents -r -n $BASE/bin/$3 $DESTINATION/temp
 cp --parents -r -n $BASE/lib/$3 $DESTINATION/temp
+cd $BASE
+BASE_VER=$(git describe --tags)
+cd $DESTINATION
+echo $BASE : $BASE_VER >> README.txt
 cd $SUPPORT
 cp --parents -r -n $AREA_DETECTOR/ADCore/db $DESTINATION/temp
 cp --parents -r -n $AREA_DETECTOR/ADCore/documentation $DESTINATION/temp
@@ -76,40 +89,64 @@ cp --parents -r -n $SSCAN/bin/$3 $DESTINATION/temp
 cp --parents -r -n $SSCAN/lib/$3 $DESTINATION/temp
 
 PLUGIN=$1
-while ! [ "$PLUGIN" = done ]; do    
-    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/db $DESTINATION/temp
-    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/bin/$3 $DESTINATION/temp
-    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/lib/$3 $DESTINATION/temp
-    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/documentation $DESTINATION/temp
-    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/bin/$3 $DESTINATION/temp
-    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/lib/$3 $DESTINATION/temp
-    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/dbd $DESTINATION/temp
-    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/iocBoot $DESTINATION/temp
-    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/*/Db $DESTINATION/temp
-    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/*/op $DESTINATION/temp
+while ! [ "$PLUGIN" = done ]; do
+    EXISTS=$(ls $AREA_DETECTOR | grep $PLUGIN)
+    if ! [ -z "$EXISTS" ]; then
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/db $DESTINATION/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/bin/$3 $DESTINATION/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/lib/$3 $DESTINATION/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/documentation $DESTINATION/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/bin/$3 $DESTINATION/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/lib/$3 $DESTINATION/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/dbd $DESTINATION/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/iocBoot $DESTINATION/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/*/Db $DESTINATION/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/*/op $DESTINATION/temp
+	cd $AREA_DETECTOR/$PLUGIN
+	PLUGIN_VER=$(git describe --tags)
+	cd $DESTINATION
+	echo $PLUGIN : $PLUGIN_VER >> README.txt
+	cd $SUPPORT
+    else
+	echo Invalid plugin: $PLUGIN
+    fi
     echo Enter name of additional detector to add or \"done\" to exit:
     read PLUGIN
 done
 
+cd $ASYN
+ASYN_VER=$(git describe --tags)
+cd ../$AUTOSAVE
+AUTO_VER=$(git describe --tags)
+cd ../$BUSY
+BUSY_VER=$(git describe --tags)
+cd ../$CALC
+CALC_VER=$(git describe --tags)
+cd ../$DEVIOCSTATS
+STAT_VER=$(git describe --tags)
+cd ../$SSCAN
+SCAN_VER=$(git describe --tags)
+cd ../$SEQ
+SEQ_VER=$(git describe --tags)
+cd ../$AREA_DETECTOR
+AD_VER=$(git describe --tags)
+
 cd $DESTINATION
-echo "Verions used in this deployment: " > README.txt
-echo EPICS $BASE >> README.txt
-echo $AREA_DETECTOR >> README.txt
-echo $ASYN >> README.txt
-echo $AUTOSAVE >> README.txt
-echo $BUSY >> README.txt
-echo $CALC >> README.txt
-echo $DEVIOCSTATS >> README.txt
-echo $SEQ >> README.txt
-echo $SSCAN >> README.txt
+echo $AREA_DETECTOR : $AD_VER >> README.txt
+echo $ASYN : $ASYN_VER >> README.txt
+echo $AUTOSAVE : $AUTO_VER >> README.txt
+echo $BUSY : $BUSY_VER >> README.txt
+echo $CALC : $CALC_VER >> README.txt
+echo $DEVIOCSTATS : $STAT_VER >> README.txt
+echo $SSCAN : $SCAN_VER >> README.txt
+echo $SEQ : $SEQ_VER >> README.txt
 
 cd $HOME
-
 echo tarring...
-tar -cjf $1_Prebuilt_$AREA_DETECTOR_$2_$3.tar.gz -C $DESTINATION .
+tar -cjf $1_$2_Prebuilt_$3.tar.gz -C $DESTINATION/temp .
 echo done.
 
-mv $1_Prebuilt_$AREA_DETECTOR_$2_$3.tar.gz $DESTINATION
+mv $1_$2_Prebuilt_$3.tar.gz $DESTINATION
 rm -rf $DESTINATION/temp
 
 end="$(date +%s)"
