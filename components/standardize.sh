@@ -1,9 +1,27 @@
-COMPONENTS=/home/mrolland/MRolland/ioc_deploy/components
+if [ -z "$1" ]; then
+    echo No input. Path to IOC required
+    exit 1
+else
+    echo IOC path: $1
+fi
 
-cp -n $COMPONENTS/prebuilt_unique.cmd .
-cp -n $COMPONENTS/prebuilt_st.cmd .
-cp -n $COMPONENTS/prebuilt_config ./config
+if ! [ -d "$1" ]; then
+    echo Invalid path: $1
+    exit 1
+fi
 
+VALID=$(ls $1 | grep st.cmd)
+if [ -z "$VALID" ]; then
+    echo Invalid directory, no st.cmd: $1
+    exit 1
+fi
+
+echo copying prebuilts...
+cp -n prebuilt_unique.cmd $1 
+cp -n prebuilt_st.cmd $1
+cp -n prebuilt_config $1/config
+
+cd $1
 echo moving EPICS variable declarations to prebuilt_unique.cmd...
 echo >> prebuilt_unique.cmd
 echo \# additional EPICS variables extracted from st.cmd >> prebuilt_unique.cmd
@@ -31,7 +49,7 @@ if ! [ -z "$hasEnv" ]; then
 	fi
     done
 fi
-grep -v 'epicsEnvSet(' st.cmd > temp
-mv temp st.cmd
+grep -v 'epicsEnvSet(' st.cmd > prebuilt_temp
+mv prebuilt_temp st.cmd
 sed -i '1i# all epicsEnvSet calls moved to prebuilt_unique.cmd' st.cmd
 echo done.
