@@ -56,6 +56,7 @@ echo "Parameter 3 = " $arg3
 mkdir -p $DESTINATION
 rm -rf temp
 mkdir temp
+cp components/generateEnvPaths.sh temp
 
 HOME=$(pwd)
 cd $SUPPORT
@@ -172,24 +173,6 @@ echo $CALC : $CALC_VER >> README.txt
 echo $DEVIOCSTATS : $STAT_VER >> README.txt
 echo $SSCAN : $SCAN_VER >> README.txt
 echo $SEQ : $SEQ_VER >> README.txt
-
-PLUGIN=$(echo $arg1 | tr a-z A-Z)
-echo epicsEnvSet\(\"$PLUGIN\", \"$DESTINATION/$AREA_DETECTOR/$arg1\"\) > envPaths.prebuilt
-echo epicsEnvSet\(\"IOC\", \"ioc$arg1\"\) >> envPaths.prebuilt
-echo epicsEnvSet\(\"TOP\", \"$DESTINATION/$arg1/iocs/*IOC\"\) >> envPaths.prebuilt
-echo epicsEnvSet\(\"SUPPORT\", \"$DESTINATION\"\) >> envPaths.prebuilt
-echo epicsEnvSet\(\"ASYN\", \"$DESTINATION/$ASYN\"\) >> envPaths.prebuilt
-echo epicsEnvSet\(\"AREA_DETECTOR\", \"$DESTINATION/$AREA_DETECTOR\"\) >> envPaths.prebuilt
-echo epicsEnvSet\(\"ADSUPPORT\", \"$DESTINATION/$AREA_DETECTOR/ADSupport\"\) >> envPaths.prebuilt
-echo epicsEnvSet\(\"ADCORE\", \"$DESTINATION/$AREA_DETECTOR/ADCore\"\) >> envPaths.prebuilt
-echo epicsEnvSet\(\"AUTOSAVE\", \"$DESTINATION/$AUTOSAVE\"\) >> envPaths.prebuilt
-echo epicsEnvSet\(\"BUSY\", \"$DESTINATION/$BUSY\"\) >> envPaths.prebuilt
-echo epicsEnvSet\(\"CALC\", \"$DESTINATION/$CALC\"\) >> envPaths.prebuilt
-echo epicsEnvSet\(\"SNCSEQ\", \"$DESTINATION/$SEQ\"\) >> envPaths.prebuilt
-echo epicsEnvSet\(\"SSCAN\", \"$DESTINATION/$SSCAN\"\) >> envPaths.prebuilt
-echo epicsEnvSet\(\"DEVIOCSTATS\", \"$DESTINATION/$DEVIOCSTATS\"\) >> envPaths.prebuilt
-echo epicsEnvSet\(\"EPICS_BASE\", \"$DESTINATION/$BASE\"\) >> envPaths.prebuilt
-
 
 cd $HOME
 echo tarring...
