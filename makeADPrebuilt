@@ -5,10 +5,6 @@
 # 3 - The EPICS architecture (linux-x86_64, etc.)
 start="$(date +%s)"
 
-echo "Parameter 1 = " $1
-echo "Parameter 2 = " $2
-echo "Parameter 3 = " $3
-
 find . -name 'auto_settings.sav_*' -exec rm -fv {} \;
 find . -name 'auto_settings.savB*' -exec rm -fv {} \;
 find . -name 'core.*' -exec rm -fv {} \;
@@ -19,13 +15,32 @@ ASYN=asyn-4-33
 AUTOSAVE=autosave-5-9
 BUSY=busy-1-7
 CALC=calc-3-7
-DEVIOCSTATS=iocStats-3-1-15
+DEVIOCSTATS=devIocStats-3-1-15
 SEQ=seq-2-2-5
 SSCAN=sscan-2-11-1
-BASE_TOP=/epics
+BASE_TOP=/usr/local/epics-devel
 BASE=base-7-0-1-1
-SUPPORT=/epics/synApps/support
-DESTINATION=../$1_$2_Prebuilt_$3
+SUPPORT=/home/epics/devel
+
+if [ $# -eq 4 ]; then
+    if [ $1 = -f ]; then
+	SKIP="y"
+	arg1=$2
+	arg2=$3
+	arg3=$4
+    else
+	SKIP="n"
+	arg1=$1
+	arg2=$2
+	arg3=$3
+    fi
+fi
+
+DESTINATION=${arg1}_${arg2}_Prebuilt_${arg3}
+
+echo "Parameter 1 = " $arg1
+echo "Parameter 2 = " $arg2
+echo "Parameter 3 = " $arg3
 
 mkdir -p $DESTINATION
 mkdir -p temp
@@ -37,7 +52,7 @@ cd $HOME
 
 cd $DESTINATION
 DESTINATION=$(pwd)
-echo $1_$2_Prebuilt_$3.tar.gz > README.txt
+echo ${arg1}_${arg2}_Prebuilt_${arg3}.tar.gz > README.txt
 echo >> README.txt
 echo Versions used in this deployment >> README.txt
 echo [folder name] : [git tag] >> README.txt
@@ -45,8 +60,8 @@ echo >> README.txt
 cd $HOME
 
 cd $BASE_TOP
-cp --parents -r -n $BASE/bin/$3 $HOME/temp
-cp --parents -r -n $BASE/lib/$3 $HOME/temp
+cp --parents -r -n $BASE/bin/$arg3 $HOME/temp
+cp --parents -r -n $BASE/lib/$arg3 $HOME/temp
 cd $BASE
 BASE_VER=$(git describe --tags)
 cd $DESTINATION
@@ -58,47 +73,47 @@ cp --parents -r -n $AREA_DETECTOR/ADCore/ADApp/Db $HOME/temp
 cp --parents -r -n $AREA_DETECTOR/ADCore/ADApp/op $HOME/temp
 cp --parents -r -n $AREA_DETECTOR/ADCore/iocBoot $HOME/temp
 cp --parents -r -n $AREA_DETECTOR/ADViewers/ImageJ $HOME/temp
-cp --parents -r -n $AREA_DETECTOR/ADCore/bin/$3 $HOME/temp
-cp --parents -r -n $AREA_DETECTOR/ADCore/lib/$3 $HOME/temp
-cp --parents -r -n $AREA_DETECTOR/ADSupport/bin/$3 $HOME/temp
-cp --parents -r -n $AREA_DETECTOR/ADSupport/lib/$3 $HOME/temp
+cp --parents -r -n $AREA_DETECTOR/ADCore/bin/$arg3 $HOME/temp
+cp --parents -r -n $AREA_DETECTOR/ADCore/lib/$arg3 $HOME/temp
+cp --parents -r -n $AREA_DETECTOR/ADSupport/bin/$arg3 $HOME/temp
+cp --parents -r -n $AREA_DETECTOR/ADSupport/lib/$arg3 $HOME/temp
 cp --parents -r -n $ASYN/opi $HOME/temp
 cp --parents -r -n $ASYN/db $HOME/temp
-cp --parents -r -n $ASYN/bin/$3 $HOME/temp
-cp --parents -r -n $ASYN/lib/$3 $HOME/temp
+cp --parents -r -n $ASYN/bin/$arg3 $HOME/temp
+cp --parents -r -n $ASYN/lib/$arg3 $HOME/temp
 cp --parents -r -n $AUTOSAVE/asApp/ $HOME/temp
 cp --parents -r -n $AUTOSAVE/asApp/op $HOME/temp
-cp --parents -r -n $AUTOSAVE/bin/$3 $HOME/temp
-cp --parents -r -n $AUTOSAVE/lib/$3 $HOME/temp
+cp --parents -r -n $AUTOSAVE/bin/$arg3 $HOME/temp
+cp --parents -r -n $AUTOSAVE/lib/$arg3 $HOME/temp
 cp --parents -r -n $BUSY/busyApp/Db $HOME/temp
 cp --parents -r -n $BUSY/busyApp/op $HOME/temp
-cp --parents -r -n $BUSY/bin/$3 $HOME/temp
-cp --parents -r -n $BUSY/lib/$3 $HOME/temp
+cp --parents -r -n $BUSY/bin/$arg3 $HOME/temp
+cp --parents -r -n $BUSY/lib/$arg3 $HOME/temp
 cp --parents -r -n $CALC/calcApp/Db $HOME/temp
 cp --parents -r -n $CALC/calcApp/ $HOME/temp
-cp --parents -r -n $CALC/bin/$3 $HOME/temp
-cp --parents -r -n $CALC/lib/$3 $HOME/temp
+cp --parents -r -n $CALC/bin/$arg3 $HOME/temp
+cp --parents -r -n $CALC/lib/$arg3 $HOME/temp
 cp --parents -r -n $DEVIOCSTATS/db $HOME/temp
 cp --parents -r -n $DEVIOCSTATS/op/adl $HOME/temp
-cp --parents -r -n $DEVIOCSTATS/bin/$3 $HOME/temp
-cp --parents -r -n $DEVIOCSTATS/lib/$3 $HOME/temp
-cp --parents -r -n $SEQ/bin/$3 $HOME/temp
-cp --parents -r -n $SEQ/lib/$3 $HOME/temp
+cp --parents -r -n $DEVIOCSTATS/bin/$arg3 $HOME/temp
+cp --parents -r -n $DEVIOCSTATS/lib/$arg3 $HOME/temp
+cp --parents -r -n $SEQ/bin/$arg3 $HOME/temp
+cp --parents -r -n $SEQ/lib/$arg3 $HOME/temp
 cp --parents -r -n $SSCAN/sscanApp/Db $HOME/temp
 cp --parents -r -n $SSCAN/sscanApp/op $HOME/temp
-cp --parents -r -n $SSCAN/bin/$3 $HOME/temp
-cp --parents -r -n $SSCAN/lib/$3 $HOME/temp
+cp --parents -r -n $SSCAN/bin/$arg3 $HOME/temp
+cp --parents -r -n $SSCAN/lib/$arg3 $HOME/temp
 
-PLUGIN=$1
+PLUGIN=$arg1
 while ! [ "$PLUGIN" = done ]; do
     EXISTS=$(ls $AREA_DETECTOR | grep $PLUGIN)
     if ! [ -z "$EXISTS" ]; then
 	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/db $HOME/temp
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/bin/$3 $HOME/temp
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/lib/$3 $HOME/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/bin/$arg3 $HOME/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/lib/$arg3 $HOME/temp
 	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/documentation $HOME/temp
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/bin/$3 $HOME/temp
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/lib/$3 $HOME/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/bin/$arg3 $HOME/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/lib/$arg3 $HOME/temp
 	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/dbd $HOME/temp
 	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/iocBoot $HOME/temp
 	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/*/Db $HOME/temp
@@ -111,8 +126,12 @@ while ! [ "$PLUGIN" = done ]; do
     else
 	echo Invalid plugin: $PLUGIN
     fi
-    echo Enter name of additional detector to add or \"done\" to exit:
-    read PLUGIN
+    if ! [ "$SKIP" = y ]; then
+	echo Enter name of additional detector to add or \"done\" to exit:
+	read PLUGIN
+    else
+	PLUGIN='done'
+    fi
 done
 
 cd $ASYN
@@ -142,12 +161,30 @@ echo $DEVIOCSTATS : $STAT_VER >> README.txt
 echo $SSCAN : $SCAN_VER >> README.txt
 echo $SEQ : $SEQ_VER >> README.txt
 
+PLUGIN=$(echo $arg1 | tr a-z A-Z)
+echo epicsEnvSet\(\"$PLUGIN\", \"$DESTINATION/$AREA_DETECTOR/$arg1\"\) > envPaths.prebuilt
+echo epicsEnvSet\(\"IOC\", \"ioc$arg1\"\) >> envPaths.prebuilt
+echo epicsEnvSet\(\"TOP\", \"$DESTINATION/$arg1/iocs/*IOC\"\) >> envPaths.prebuilt
+echo epicsEnvSet\(\"SUPPORT\", \"$DESTINATION\"\) >> envPaths.prebuilt
+echo epicsEnvSet\(\"ASYN\", \"$DESTINATION/$ASYN\"\) >> envPaths.prebuilt
+echo epicsEnvSet\(\"AREA_DETECTOR\", \"$DESTINATION/$AREA_DETECTOR\"\) >> envPaths.prebuilt
+echo epicsEnvSet\(\"ADSUPPORT\", \"$DESTINATION/$AREA_DETECTOR/ADSupport\"\) >> envPaths.prebuilt
+echo epicsEnvSet\(\"ADCORE\", \"$DESTINATION/$AREA_DETECTOR/ADCore\"\) >> envPaths.prebuilt
+echo epicsEnvSet\(\"AUTOSAVE\", \"$DESTINATION/$AUTOSAVE\"\) >> envPaths.prebuilt
+echo epicsEnvSet\(\"BUSY\", \"$DESTINATION/$BUSY\"\) >> envPaths.prebuilt
+echo epicsEnvSet\(\"CALC\", \"$DESTINATION/$CALC\"\) >> envPaths.prebuilt
+echo epicsEnvSet\(\"SNCSEQ\", \"$DESTINATION/$SEQ\"\) >> envPaths.prebuilt
+echo epicsEnvSet\(\"SSCAN\", \"$DESTINATION/$SSCAN\"\) >> envPaths.prebuilt
+echo epicsEnvSet\(\"DEVIOCSTATS\", \"$DESTINATION/$DEVIOCSTATS\"\) >> envPaths.prebuilt
+echo epicsEnvSet\(\"EPICS_BASE\", \"$DESTINATION/$BASE\"\) >> envPaths.prebuilt
+
+
 cd $HOME
 echo tarring...
-tar -cjf $1_$2_Prebuilt_$3.tar.gz -C temp .
+tar -cjf ${arg1}_${arg2}_Prebuilt_${arg3}.tar.gz -C temp .
 echo done.
 
-mv $1_$2_Prebuilt_$3.tar.gz $DESTINATION
+mv ${arg1}_${arg2}_Prebuilt_${arg3}.tar.gz $DESTINATION
 rm -rf temp
 
 end="$(date +%s)"
