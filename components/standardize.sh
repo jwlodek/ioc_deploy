@@ -1,8 +1,6 @@
 if [ -z "$1" ]; then
     echo No input. Path to IOC required
     exit 1
-else
-    echo IOC path: $1
 fi
 
 if ! [ -d "$1" ]; then
@@ -16,10 +14,12 @@ if [ -z "$VALID" ]; then
     exit 1
 fi
 
+echo IOC path: $1
+
 echo copying prebuilts...
-cp -n prebuilt_unique.cmd $1 
-cp -n prebuilt_st.cmd $1
-cp -n prebuilt_config $1/config
+cp -n prebuilts/prebuilt_unique.cmd $1 
+cp -n prebuilts/prebuilt_st.cmd $1
+cp -n prebuilts/prebuilt_config $1
 
 cd $1
 echo moving EPICS variable declarations to prebuilt_unique.cmd...
