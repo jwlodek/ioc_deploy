@@ -14,22 +14,40 @@ find . -name 'auto_settings.savB*' -exec rm -fv {} \;
 find . -name 'core.*' -exec rm -fv {} \;
 find . -name '*.exe.*' -exec rm -fv {} \;
 
-AREA_DETECTOR=areaDetector-3-2
-ASYN=asyn-4-33
-AUTOSAVE=autosave-5-9
-BUSY=busy-1-7
-CALC=calc-3-7
-DEVIOCSTATS=iocStats-3-1-15
-SEQ=seq-2-2-5
-SSCAN=sscan-2-11-1
-BASE_TOP=/epics
-BASE=base-7-0-1-1
-SUPPORT=/epics/synApps/support
+#AREA_DETECTOR=areaDetector-3-2
+#ASYN=asyn-4-33
+#AUTOSAVE=autosave-5-9
+#BUSY=busy-1-7
+#CALC=calc-3-7
+#DEVIOCSTATS=iocStats-3-1-15
+#SEQ=seq-2-2-5
+#SSCAN=sscan-2-11-1
+#BASE_TOP=/epics
+#BASE=base-7-0-1-1
+#SUPPORT=/epics/synApps/support
 
+AREA_DETECTOR=areaDetector
+ASYN=asyn
+AUTOSAVE=autosave
+BUSY=busy
+CALC=calc
+DEVIOCSTATS=iocStats
+SEQ=seq
+SSCAN=sscan
+BASE_TOP=/controls/devel
+BASE=base-7-0-1-1
+SUPPORT=/controls/devel/support
+
+# SKIP= -f skip other detector entries
+# DetArray= "y" and use list of detectors.
+DetArray="y"
 SKIP="n"
 arg1=$1
 arg2=$2
 arg3=$3
+declare -a det=("ADProsilica"
+    "ADCSimDetector"
+    )
 
 if [ $# -lt 3 ] || [ $# -gt 4 ]; then
     echo Three arguments required.
@@ -118,34 +136,59 @@ cp --parents -r -n $SSCAN/bin/$arg3 $HOME/temp
 cp --parents -r -n $SSCAN/lib/$arg3 $HOME/temp
 
 PLUGIN=$arg1
-while ! [ "$PLUGIN" = done ]; do
-    EXISTS=$(ls $AREA_DETECTOR | grep $PLUGIN)
-    if ! [ -z "$EXISTS" ]; then
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/db $HOME/temp
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/bin/$arg3 $HOME/temp
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/lib/$arg3 $HOME/temp
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/documentation $HOME/temp
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/bin/$arg3 $HOME/temp
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/lib/$arg3 $HOME/temp
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/dbd $HOME/temp
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/iocBoot $HOME/temp
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/*/Db $HOME/temp
-	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/*/op $HOME/temp
-	cd $AREA_DETECTOR/$PLUGIN
-	PLUGIN_VER=$(git describe --tags)
-	cd $DESTINATION
-	echo $PLUGIN : $PLUGIN_VER >> README.txt
-	cd $SUPPORT
-    else
-	echo Invalid plugin: $PLUGIN
-    fi
-    if ! [ "$SKIP" = y ]; then
-	echo Enter name of additional detector to add or \"done\" to exit:
-	read PLUGIN
-    else
-	PLUGIN='done'
-    fi
-done
+if [ $DetArray = "y" ]; then
+    for i in "${det[@]}"
+    do 
+	PLUGIN="$i"
+	EXISTS=$(ls $AREA_DETECTOR | grep $PLUGIN)
+	if ! [ -z "$EXISTS" ]; then
+	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/db $HOME/temp
+	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/bin/$arg3 $HOME/temp
+	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/lib/$arg3 $HOME/temp
+	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/documentation $HOME/temp
+	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/bin/$arg3 $HOME/temp
+	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/lib/$arg3 $HOME/temp
+	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/dbd $HOME/temp
+	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/iocBoot $HOME/temp
+	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/*/Db $HOME/temp
+	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/*/op $HOME/temp
+	    cd $AREA_DETECTOR/$PLUGIN
+	    PLUGIN_VER=$(git describe --tags)
+	    cd $DESTINATION
+	    echo $PLUGIN : $PLUGIN_VER >> README.txt
+	    cd $SUPPORT
+ 	fi
+    done
+else
+    while ! [ "$PLUGIN" = done ]; do
+	EXISTS=$(ls $AREA_DETECTOR | grep $PLUGIN)
+	if ! [ -z "$EXISTS" ]; then
+	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/db $HOME/temp
+	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/bin/$arg3 $HOME/temp
+	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/lib/$arg3 $HOME/temp
+	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/documentation $HOME/temp
+	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/bin/$arg3 $HOME/temp
+	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/lib/$arg3 $HOME/temp
+	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/dbd $HOME/temp
+	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/iocBoot $HOME/temp
+	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/*/Db $HOME/temp
+	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/*/op $HOME/temp
+	    cd $AREA_DETECTOR/$PLUGIN
+	    PLUGIN_VER=$(git describe --tags)
+	    cd $DESTINATION
+	    echo $PLUGIN : $PLUGIN_VER >> README.txt
+	    cd $SUPPORT
+	else
+	    echo Invalid plugin: $PLUGIN
+	fi
+	if ! [ "$SKIP" = y ]; then
+	    echo Enter name of additional detector to add or \"done\" to exit:
+	    read PLUGIN
+	else
+	    PLUGIN='done'
+	fi
+    done
+fi
 
 cd $ASYN
 ASYN_VER=$(git describe --tags)
@@ -176,10 +219,12 @@ echo $SEQ : $SEQ_VER >> README.txt
 
 cd $HOME
 echo tarring...
-tar -cjf ${arg1}_${arg2}_Prebuilt_${arg3}.tar.gz -C temp .
+#tar -cjf ${arg1}_${arg2}_Prebuilt_${arg3}.tar.gz -C temp .
+tar -czf ${arg1}_${arg2}_Prebuilt_${arg3}.tgz -C temp .
 echo done.
 
-mv ${arg1}_${arg2}_Prebuilt_${arg3}.tar.gz $DESTINATION
+#mv ${arg1}_${arg2}_Prebuilt_${arg3}.tar.gz $DESTINATION
+mv ${arg1}_${arg2}_Prebuilt_${arg3}.tgz $DESTINATION
 rm -rf temp
 
 end="$(date +%s)"
