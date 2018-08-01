@@ -49,5 +49,12 @@ echo epicsEnvSet\(\"SNCSEQ\", \"$SEQ\"\) >> envPaths
 echo epicsEnvSet\(\"SSCAN\", \"$SSCAN\"\) >> envPaths
 echo epicsEnvSet\(\"DEVIOCSTATS\", \"$DEVIOCSTATS\"\) >> envPaths
 echo epicsEnvSet\(\"EPICS_BASE\", \"$BASE\"\) >> envPaths
+#echo epicsEnvSet\(\"PVA\", \"$BASE/modules\"\) >> envPaths
+#echo epicsEnvSet\(\"PVACCESS\", \"$BASE/modules/pvAccess\"\) >> envPaths
+#echo epicsEnvSet\(\"PVDATA\", \"$BASE/modules/pvData\"\) >> envPaths
+#echo epicsEnvSet\(\"PVDATABASE\", \"$BASE/modules/pvDatabase\"\) >> envPaths
+#echo epicsEnvSet\(\"NORMATIVETYPES\", \"$BASE/modules/normativeTypes\"\) >> envPaths
+
+
 
 mv envPaths $1
