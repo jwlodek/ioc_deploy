@@ -49,6 +49,7 @@ arg2=$2
 arg3=$3
 declare -a det=("ADProsilica"
     "ADCSimDetector"
+    "ADPluginBar"
     )
 if [ $1 = "-h" ]; then
     echo 'Tool for creating a deployment of an AreaDetector IOC.'
