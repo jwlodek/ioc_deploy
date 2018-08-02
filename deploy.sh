@@ -1,7 +1,7 @@
 #!/bin/bash
 # The core of this script is created by Mark Rivers, from the AreaDetector
-# repo: https://github.com/areaDetector/areaDetector
-# Some additions and changes made by Michael Rolland
+# repo: https://github.com/areaDetector/areaDetector/blob/master/makeADPrebuilt
+# Additions and changes made by Michael Rolland
 
 #  This script takes 3 parameters.  
 # 1 - The name of the detector (ADProsilica, etc.)
@@ -52,8 +52,10 @@ declare -a det=("ADProsilica"
     )
 if [ $1 = "-h" ]; then
     echo 'Tool for creating a deployment of an AreaDetector IOC.'
-    echo 'makeADPrebuilt [-f] [-a] [DRIVER] [VERSION] [ARCH]'
-    echo 'eg. makeADPrebuilt ADProsilica R2-4 linux-x86_64'
+    echo 'Ensure macros are set correctly before running.'
+    echo
+    echo 'deploy.sh [-f] [-a] [DRIVER] [VERSION] [ARCH]'
+    echo 'eg. deploy.sh ADProsilica R2-4 linux-x86_64'
     echo
     echo 'Flags:'
     echo '-f : Deploy only the detector given (Bypass prompt)'
