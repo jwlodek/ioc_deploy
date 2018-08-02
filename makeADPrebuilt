@@ -26,21 +26,23 @@ find . -name '*.exe.*' -exec rm -fv {} \;
 #BASE=base-7-0-1-1
 #SUPPORT=/epics/synApps/support
 
-AREA_DETECTOR=areaDetector
+AREA_DETECTOR=areaDetector-master
 ASYN=asyn
 AUTOSAVE=autosave
 BUSY=busy
 CALC=calc
 DEVIOCSTATS=iocStats
-SEQ=seq
+SEQ=seq-2-2-5
 SSCAN=sscan
-BASE_TOP=/controls/devel
-BASE=base-7-0-1-1
-SUPPORT=/controls/devel/support
+BASE_TOP=/epics
+BASE=base-7.0.1.1
+SUPPORT=/home/mrolland/Documents/epics/synAppsRelease/synApps/support
 
-# SKIP= -f skip other detector entries
-# DetArray= "y" and use list of detectors.
-DetArray="y"
+# Argument flags:
+#     -f: Skip prompt to add another plugin
+#     -a: Skip prompt and use list of plugins "det" instead
+#     -h: Display help
+DetArray="n"
 SKIP="n"
 arg1=$1
 arg2=$2
@@ -48,14 +50,33 @@ arg3=$3
 declare -a det=("ADProsilica"
     "ADCSimDetector"
     )
-
+if [ $1 = "-h" ]; then
+    echo 'Tool for creating a deployment of an AreaDetector IOC.'
+    echo 'makeADPrebuilt [-f] [-a] [DRIVER] [VERSION] [ARCH]'
+    echo 'eg. makeADPrebuilt ADProsilica R2-4 linux-x86_64'
+    echo
+    echo 'Flags:'
+    echo '-f : Deploy only the detector given (Bypass prompt)'
+    echo '-a : Deploy the detectors given by the "det" array in the script (Bypass prompt)'
+    exit 1
+fi
 if [ $# -lt 3 ] || [ $# -gt 4 ]; then
-    echo Three arguments required.
+    echo Three arguments required: Driver, version, and architecture.
     exit 1
 fi
 if [ $# -eq 4 ]; then
-    if [ $1 = -f ]; then
-	SKIP="y"
+    if [ $1 = -f ] || [ $1 = -a ]; then
+	if [ $1 = -a ]; then
+	    DetArray="y"
+	    echo Using list instead of prompt:
+	    for i in "${det[@]}"
+	    do
+		echo $i
+	    done
+	else
+	    SKIP="y"
+	    echo Skipping prompt
+	fi
 	arg1=$2
 	arg2=$3
 	arg3=$4
@@ -65,7 +86,8 @@ if [ $# -eq 4 ]; then
     fi
 fi
 
-DESTINATION=${arg1}_${arg2}_Prebuilt_${arg3}
+DATE=`date +%Y-%m-%d`
+DESTINATION=${arg1}_${arg2}_Prebuilt_${arg3}_$DATE
 
 echo "Parameter 1 = " $arg1
 echo "Parameter 2 = " $arg2
@@ -83,7 +105,7 @@ cd $HOME
 
 cd $DESTINATION
 DESTINATION=$(pwd)
-echo ${arg1}_${arg2}_Prebuilt_${arg3}.tar.gz > README.txt
+echo ${arg1}_${arg2}_Prebuilt_${arg3}_$DATE.tgz > README.txt
 echo >> README.txt
 echo Versions used in this deployment >> README.txt
 echo [folder name] : [git tag] >> README.txt
@@ -135,60 +157,47 @@ cp --parents -r -n $SSCAN/sscanApp/op $HOME/temp
 cp --parents -r -n $SSCAN/bin/$arg3 $HOME/temp
 cp --parents -r -n $SSCAN/lib/$arg3 $HOME/temp
 
+i=0
 PLUGIN=$arg1
-if [ $DetArray = "y" ]; then
-    for i in "${det[@]}"
-    do 
-	PLUGIN="$i"
-	EXISTS=$(ls $AREA_DETECTOR | grep $PLUGIN)
-	if ! [ -z "$EXISTS" ]; then
-	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/db $HOME/temp
-	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/bin/$arg3 $HOME/temp
-	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/lib/$arg3 $HOME/temp
-	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/documentation $HOME/temp
-	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/bin/$arg3 $HOME/temp
-	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/lib/$arg3 $HOME/temp
-	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/dbd $HOME/temp
-	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/iocBoot $HOME/temp
-	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/*/Db $HOME/temp
-	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/*/op $HOME/temp
-	    cd $AREA_DETECTOR/$PLUGIN
-	    PLUGIN_VER=$(git describe --tags)
-	    cd $DESTINATION
-	    echo $PLUGIN : $PLUGIN_VER >> README.txt
-	    cd $SUPPORT
- 	fi
-    done
-else
-    while ! [ "$PLUGIN" = done ]; do
-	EXISTS=$(ls $AREA_DETECTOR | grep $PLUGIN)
-	if ! [ -z "$EXISTS" ]; then
-	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/db $HOME/temp
-	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/bin/$arg3 $HOME/temp
-	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/lib/$arg3 $HOME/temp
-	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/documentation $HOME/temp
-	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/bin/$arg3 $HOME/temp
-	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/lib/$arg3 $HOME/temp
-	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/dbd $HOME/temp
-	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/iocBoot $HOME/temp
-	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/*/Db $HOME/temp
-	    cp --parents -r -n $AREA_DETECTOR/$PLUGIN/*/op $HOME/temp
-	    cd $AREA_DETECTOR/$PLUGIN
-	    PLUGIN_VER=$(git describe --tags)
-	    cd $DESTINATION
-	    echo $PLUGIN : $PLUGIN_VER >> README.txt
-	    cd $SUPPORT
-	else
-	    echo Invalid plugin: $PLUGIN
+if [ "$DetArray" = y ]; then
+    PLUGIN=${det[${i}]}
+fi
+while ! [ "$PLUGIN" = done ]; do
+    EXISTS=$(ls $AREA_DETECTOR | grep $PLUGIN)
+    if ! [ -z "$EXISTS" ]; then
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/db $HOME/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/bin/$arg3 $HOME/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/lib/$arg3 $HOME/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/documentation $HOME/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/bin/$arg3 $HOME/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/lib/$arg3 $HOME/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/dbd $HOME/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/iocs/*IOC/iocBoot $HOME/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/*/Db $HOME/temp
+	cp --parents -r -n $AREA_DETECTOR/$PLUGIN/*/op $HOME/temp
+	cd $AREA_DETECTOR/$PLUGIN
+	PLUGIN_VER=$(git describe --tags)
+	cd $DESTINATION
+	echo $PLUGIN : $PLUGIN_VER >> README.txt
+	cd $SUPPORT
+    else
+	echo Invalid driver: $PLUGIN
+    fi
+    if [ "$DetArray" = y ]; then
+	((i++))
+	PLUGIN=${det[${i}]}
+        if [ -z $PLUGIN ]; then
+	    PLUGIN='done'
 	fi
-	if ! [ "$SKIP" = y ]; then
+    else
+	if [ "$SKIP" = n ]; then
 	    echo Enter name of additional detector to add or \"done\" to exit:
 	    read PLUGIN
 	else
 	    PLUGIN='done'
 	fi
-    done
-fi
+    fi
+done
 
 cd $ASYN
 ASYN_VER=$(git describe --tags)
@@ -216,15 +225,15 @@ echo $CALC : $CALC_VER >> README.txt
 echo $DEVIOCSTATS : $STAT_VER >> README.txt
 echo $SSCAN : $SCAN_VER >> README.txt
 echo $SEQ : $SEQ_VER >> README.txt
+cp README.txt $HOME/temp
 
 cd $HOME
 echo tarring...
-#tar -cjf ${arg1}_${arg2}_Prebuilt_${arg3}.tar.gz -C temp .
-tar -czf ${arg1}_${arg2}_Prebuilt_${arg3}.tgz -C temp .
+tar -czf ${arg1}_${arg2}_Prebuilt_${arg3}_$DATE.tgz -C temp .
 echo done.
 
 #mv ${arg1}_${arg2}_Prebuilt_${arg3}.tar.gz $DESTINATION
-mv ${arg1}_${arg2}_Prebuilt_${arg3}.tgz $DESTINATION
+mv ${arg1}_${arg2}_Prebuilt_${arg3}_$DATE.tgz $DESTINATION
 rm -rf temp
 
 end="$(date +%s)"
