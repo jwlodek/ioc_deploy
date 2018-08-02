@@ -26,17 +26,17 @@ find . -name '*.exe.*' -exec rm -fv {} \;
 #BASE=base-7-0-1-1
 #SUPPORT=/epics/synApps/support
 
-AREA_DETECTOR=areaDetector-master
+AREA_DETECTOR=areaDetector
 ASYN=asyn
 AUTOSAVE=autosave
 BUSY=busy
 CALC=calc
 DEVIOCSTATS=iocStats
-SEQ=seq-2-2-5
+SEQ=seq
 SSCAN=sscan
-BASE_TOP=/epics
-BASE=base-7.0.1.1
-SUPPORT=/home/mrolland/Documents/epics/synAppsRelease/synApps/support
+BASE_TOP=/controls/devel
+BASE=base-7-0-1-1
+SUPPORT=/controls/devel/support
 
 # Argument flags:
 #     -f: Skip prompt to add another plugin
