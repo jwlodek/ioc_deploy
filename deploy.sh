@@ -89,7 +89,13 @@ if [ $# -eq 4 ]; then
 fi
 
 DATE=`date +%Y-%m-%d`
-DESTINATION=${arg1}_${arg2}_Prebuilt_${arg3}_$DATE
+
+# name of tar file
+# do not include extension
+NAME=${arg1}_${arg2}_Prebuilt_${arg3}_$DATE
+
+# path to folder containing tar
+DESTINATION=$NAME
 
 echo "Parameter 1 = " $arg1
 echo "Parameter 2 = " $arg2
@@ -231,11 +237,10 @@ cp README.txt $HOME/temp
 
 cd $HOME
 echo tarring...
-tar -czf ${arg1}_${arg2}_Prebuilt_${arg3}_$DATE.tgz -C temp .
+tar -czf $NAME.tgz -C temp .
 echo done.
 
-#mv ${arg1}_${arg2}_Prebuilt_${arg3}.tar.gz $DESTINATION
-mv ${arg1}_${arg2}_Prebuilt_${arg3}_$DATE.tgz $DESTINATION
+mv $NAME.tgz $DESTINATION
 rm -rf temp
 
 end="$(date +%s)"
