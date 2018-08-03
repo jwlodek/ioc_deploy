@@ -18,7 +18,7 @@ echo IOC path: $1
 
 echo copying prebuilts...
 cp -n prebuilts/prebuilt_unique.cmd $1 
-cp -n prebuilts/prebuilt_st.cmd $1
+cp -n prebuilts/prebuilt_prosilica_st.cmd $1
 cp -n prebuilts/prebuilt_config $1
 
 cd $1
