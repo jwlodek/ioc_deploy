@@ -1,21 +1,33 @@
-#!/epics/support/AD3-1/ADProsilica/iocs/prosilicaIOC/bin/linux-x86_64/prosilicaApp
+#!/epics/support/areaDetector/ADProsilica/iocs/prosilicaIOC/bin/linux-x86_64/prosilicaApp
 
 errlogInit(20000)
 
 < envPaths
-< prebuilt_unique.cmd
+< unique.cmd
 
-# dbLoadDatabase("$(TOP)/dbd/prosilicaApp.dbd")
-# App_registerRecordDeviceDriver(pdbbase)
+dbLoadDatabase("/epics/support/AD3-1/ADProsilica/iocs/prosilicaIOC/dbd/prosilicaApp.dbd")
+prosilicaApp_registerRecordDeviceDriver(pdbbase)
+
+#prosilicaConfig("$(PORT)", "$(UID-NUM)", 50, 0)
+#prosilicaConfig("$(PORT)", "$(CAM-IP)", -1, -1)
+#prosilicaConfig("$(PORT)", "$(CAM-IP)", 0, 0)
+prosilicaConfig("$(PORT)", "$(CAM-IP)",  50, 0, 0, 0, 10)
 
 asynSetTraceIOMask("$(PORT)",0,2)
 
 dbLoadRecords("$(ADCORE)/db/ADBase.template",   "P=$(PREFIX),R=cam1:,PORT=$(PORT),ADDR=0,TIMEOUT=1")
 dbLoadRecords("$(ADCORE)/db/NDFile.template",   "P=$(PREFIX),R=cam1:,PORT=$(PORT),ADDR=0,TIMEOUT=1")
+# Note that prosilica.template must be loaded after NDFile.template to replace the file format correctly
+dbLoadRecords("$(ADPROSILICA)/db/prosilica.template","P=$(PREFIX),R=cam1:,PORT=$(PORT),ADDR=0,TIMEOUT=1,TRSCAN=Passive")
 
 # Create a standard arrays plugin, set it to get data from first Prosilica driver.
 NDStdArraysConfigure("Image1", 5, 0, "$(PORT)", 0, 0)
 dbLoadRecords("$(ADCORE)/db/NDPluginBase.template","P=$(PREFIX),R=image1:,PORT=Image1,ADDR=0,TIMEOUT=1,NDARRAY_PORT=$(PORT),NDARRAY_ADDR=0")
+
+# Use this line if you want to use the Prosilica in 8,12 or 16-bit modes.  
+#Prosilica GC1290/GT1290: 1280 * 960 = 1228800; MAX_ARRAY=2457600 Bytes
+#Prosilica Mako G-125B: 1292 * 964 = 1245488; MAX_ARRAY=2490976 Bytes
+#Prosilica GX1920: 1936 * 1456 = 2818816; MAX_ARRAY=5637632 Bytes
 
 dbLoadRecords("$(ADCORE)/db/NDStdArrays.template", "P=$(PREFIX),R=image1:,PORT=Image1,ADDR=0,TIMEOUT=1,TYPE=$(NDTYPE),FTVL=$(NDFTVL),NELEMENTS=$(NELMT),NDARRAY_PORT=$(PORT),NDARRAY_ADDR=0")
 
@@ -39,6 +51,7 @@ set_requestfile_path("$(ADCORE)/ADApp/Db")
 set_requestfile_path("$(ADCORE)/iocBoot")
 set_requestfile_path("$(CALC)/calcApp/Db")
 set_requestfile_path("$(SSCAN)/sscanApp/Db")
+set_requestfile_path("$(ADPROSILICA)/prosilicaApp/Db/")
 
 system("install -m 777 -d $(TOP)/as/save")
 system("install -m 777 -d $(TOP)/as/req")
