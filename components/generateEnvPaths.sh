@@ -49,6 +49,7 @@ echo epicsEnvSet\(\"SNCSEQ\", \"$SEQ\"\) >> envPaths
 echo epicsEnvSet\(\"SSCAN\", \"$SSCAN\"\) >> envPaths
 echo epicsEnvSet\(\"DEVIOCSTATS\", \"$DEVIOCSTATS\"\) >> envPaths
 echo epicsEnvSet\(\"EPICS_BASE\", \"$BASE\"\) >> envPaths
+echo epicsEnvSet\(\"ADPLUGINBAR\", \"$AREA_DETECTOR/ADPluginBar\"\) >> envPaths
 #echo epicsEnvSet\(\"PVA\", \"$BASE/modules\"\) >> envPaths
 #echo epicsEnvSet\(\"PVACCESS\", \"$BASE/modules/pvAccess\"\) >> envPaths
 #echo epicsEnvSet\(\"PVDATA\", \"$BASE/modules/pvData\"\) >> envPaths
