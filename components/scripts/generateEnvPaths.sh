@@ -4,9 +4,6 @@ if [ $# -ne 2 ]; then
     exit 1
 fi
 
-echo Destination: $1
-echo Driver: $2
-
 HOME=$(pwd)
 
 cd base*

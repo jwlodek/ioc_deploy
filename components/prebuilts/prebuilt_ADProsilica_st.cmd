@@ -3,7 +3,7 @@
 errlogInit(20000)
 
 < envPaths
-< unique.cmd
+< prebuilt_unique.cmd
 
 dbLoadDatabase("/epics/support/AD3-1/ADProsilica/iocs/prosilicaIOC/dbd/prosilicaApp.dbd")
 prosilicaApp_registerRecordDeviceDriver(pdbbase)

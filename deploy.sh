@@ -105,7 +105,10 @@ echo "Parameter 3 = " $arg3
 mkdir -p $DESTINATION
 rm -rf temp
 mkdir temp
-cp components/generateEnvPaths.sh temp
+cp -r components/prebuilts temp
+# cp -r components/scripts temp
+cp components/scripts/generateEnvPaths.sh temp
+cp components/standardize.sh temp
 
 HOME=$(pwd)
 cd $SUPPORT

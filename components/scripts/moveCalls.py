@@ -19,8 +19,10 @@ if not os.path.isfile(prebuilt):
     quit(1)
 
 lines=[]
+dirty=[]
 for line in open(prebuilt):
     lines.append(line)
+    dirty.append(0)
 
 for line in open(stcmd):
     if '#' in line:
@@ -32,12 +34,17 @@ for line in open(stcmd):
             args = argSearch.group(1)
             func = funcSearch.group(1)
             for i,l in enumerate(lines):
+                if '#' in l:
+                    continue
                 if func in l:
+                    if dirty[i] == 1:
+                        continue
                     lines[i]=line
+                    dirty[i]=1
 
 i = 0
 for pbLine in fileinput.input(prebuilt, inplace=True):
-    print(lines[i])
+    print(lines[i], end="")
     if pbLine != lines[i]:
         sys.stderr.write("Line changed: " + pbLine + " -> " + lines[i] + "\n")
     i += 1
