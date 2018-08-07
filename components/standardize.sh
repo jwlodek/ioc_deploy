@@ -85,7 +85,7 @@ if ! [ -z "$driver" ]; then
 	echo App path: $APPDIR/$APP
 	cd $HOME
 	cd $1
-	var="#!$APPDIR/$APP"
+	var="#!$APPDIR/$APP st.cmd"
 	sed -i "1s@.*@$var@" $driver
     else
 	echo Could not find IOC binary.
