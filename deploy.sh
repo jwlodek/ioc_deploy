@@ -108,7 +108,7 @@ mkdir temp
 cp -r components/prebuilts temp
 # cp -r components/scripts temp
 cp components/scripts/generateEnvPaths.sh temp
-cp components/standardize.sh temp
+cp components/standardizeIOC.sh temp
 
 HOME=$(pwd)
 cd $SUPPORT

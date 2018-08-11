@@ -6,14 +6,14 @@ if [ "$1" = -h ]; then
     echo "Path to IOC folder"
     echo "Driver name"
     echo
-    echo "bash standardize.sh /epics/iocs/cam-GC1380 ADProsilica"
+    echo "bash standardizeIOC.sh /epics/iocs/cam-GC1380 ADProsilica"
     exit 1
 fi
 if [ -z "$1" ] || [ -z "$2" ]; then
     echo Invalid input.
     echo Required input: Path to IOC and driver name
     echo
-    echo bash standardize.sh /epics/iocs/cam-GC1380 ADProsilica
+    echo bash standardizeIOC.sh /epics/iocs/cam-GC1380 ADProsilica
     exit 1
 fi
 
