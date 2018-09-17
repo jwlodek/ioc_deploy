@@ -151,8 +151,8 @@ cp --parents -r -n $AUTOSAVE/asApp/ $HOME/temp
 cp --parents -r -n $AUTOSAVE/asApp/op $HOME/temp
 cp --parents -r -n $AUTOSAVE/bin/$arg3 $HOME/temp
 cp --parents -r -n $AUTOSAVE/lib/$arg3 $HOME/temp
-cp --parents -r -n $AUTOSAVE/db/$arg3 $HOME/temp
-cp --parents -r -n $AUTOSAVE/dbd/$arg3 $HOME/temp
+cp --parents -r -n $AUTOSAVE/db $HOME/temp
+cp --parents -r -n $AUTOSAVE/dbd $HOME/temp
 cp --parents -r -n $BUSY/busyApp/Db $HOME/temp
 cp --parents -r -n $BUSY/busyApp/op $HOME/temp
 cp --parents -r -n $BUSY/bin/$arg3 $HOME/temp
