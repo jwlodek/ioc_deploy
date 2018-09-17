@@ -50,6 +50,7 @@ arg3=$3
 declare -a det=("ADProsilica"
     "ADCSimDetector"
     "ADPluginBar"
+    "ADAndor3"
     )
 if [ $1 = "-h" ]; then
     echo 'Tool for creating a deployment of an AreaDetector IOC.'
@@ -150,6 +151,8 @@ cp --parents -r -n $AUTOSAVE/asApp/ $HOME/temp
 cp --parents -r -n $AUTOSAVE/asApp/op $HOME/temp
 cp --parents -r -n $AUTOSAVE/bin/$arg3 $HOME/temp
 cp --parents -r -n $AUTOSAVE/lib/$arg3 $HOME/temp
+cp --parents -r -n $AUTOSAVE/db/$arg3 $HOME/temp
+cp --parents -r -n $AUTOSAVE/dbd/$arg3 $HOME/temp
 cp --parents -r -n $BUSY/busyApp/Db $HOME/temp
 cp --parents -r -n $BUSY/busyApp/op $HOME/temp
 cp --parents -r -n $BUSY/bin/$arg3 $HOME/temp
