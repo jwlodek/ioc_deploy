@@ -14,17 +14,17 @@ find . -name 'auto_settings.savB*' -exec rm -fv {} \;
 find . -name 'core.*' -exec rm -fv {} \;
 find . -name '*.exe.*' -exec rm -fv {} \;
 
-#AREA_DETECTOR=areaDetector-3-2
-#ASYN=asyn-4-33
-#AUTOSAVE=autosave-5-9
-#BUSY=busy-1-7
-#CALC=calc-3-7
-#DEVIOCSTATS=iocStats-3-1-15
+#AREA_DETECTOR=areaDetector-master
+#ASYN=asyn
+#AUTOSAVE=autosave
+#BUSY=busy
+#CALC=calc
+#DEVIOCSTATS=iocStats
 #SEQ=seq-2-2-5
-#SSCAN=sscan-2-11-1
+#SSCAN=sscan
 #BASE_TOP=/epics
-#BASE=base-7-0-1-1
-#SUPPORT=/epics/synApps/support
+#BASE=base-7.0.1.1
+#SUPPORT=/home/mrolland/Documents/epics/synAppsRelease/synApps/support
 
 AREA_DETECTOR=areaDetector
 ASYN=asyn
@@ -94,10 +94,10 @@ DATE=`date +%Y-%m-%d`
 
 # name of tar file
 # do not include extension
-NAME=${arg1}_${arg2}_Prebuilt_${arg3}_$DATE
+NAME=${arg1}_${arg2}_${arg3}_$DATE
 
 # path to folder containing tar
-DESTINATION=$NAME
+DESTINATION="DEPLOYMENTS"
 
 echo "Parameter 1 = " $arg1
 echo "Parameter 2 = " $arg2
@@ -118,11 +118,11 @@ cd $HOME
 
 cd $DESTINATION
 DESTINATION=$(pwd)
-echo ${arg1}_${arg2}_Prebuilt_${arg3}_$DATE.tgz > README.txt
-echo >> README.txt
-echo Versions used in this deployment >> README.txt
-echo [folder name] : [git tag] >> README.txt
-echo >> README.txt
+echo $NAME.tgz > README_$NAME.txt
+echo >> README_$NAME.txt
+echo Versions used in this deployment >> README_$NAME.txt
+echo [folder name] : [git tag] >> README_$NAME.txt
+echo >> README_$NAME.txt
 cd $HOME
 
 cd $BASE_TOP
@@ -131,7 +131,7 @@ cp --parents -r -n $BASE/lib/$arg3 $HOME/temp
 cd $BASE
 BASE_VER=$(git describe --tags)
 cd $DESTINATION
-echo $BASE : $BASE_VER >> README.txt
+echo $BASE : $BASE_VER >> README_$NAME.txt
 cd $SUPPORT
 cp --parents -r -n $AREA_DETECTOR/ADCore/db $HOME/temp
 cp --parents -r -n $AREA_DETECTOR/ADCore/documentation $HOME/temp
@@ -193,7 +193,7 @@ while ! [ "$PLUGIN" = done ]; do
 	cd $AREA_DETECTOR/$PLUGIN
 	PLUGIN_VER=$(git describe --tags)
 	cd $DESTINATION
-	echo $PLUGIN : $PLUGIN_VER >> README.txt
+	echo $PLUGIN : $PLUGIN_VER >> README_$NAME.txt
 	cd $SUPPORT
     else
 	echo Invalid driver: $PLUGIN
@@ -232,15 +232,15 @@ cd ../$AREA_DETECTOR
 AD_VER=$(git describe --tags)
 
 cd $DESTINATION
-echo $AREA_DETECTOR : $AD_VER >> README.txt
-echo $ASYN : $ASYN_VER >> README.txt
-echo $AUTOSAVE : $AUTO_VER >> README.txt
-echo $BUSY : $BUSY_VER >> README.txt
-echo $CALC : $CALC_VER >> README.txt
-echo $DEVIOCSTATS : $STAT_VER >> README.txt
-echo $SSCAN : $SCAN_VER >> README.txt
-echo $SEQ : $SEQ_VER >> README.txt
-cp README.txt $HOME/temp
+echo $AREA_DETECTOR : $AD_VER >> README_$NAME.txt
+echo $ASYN : $ASYN_VER >> README_$NAME.txt
+echo $AUTOSAVE : $AUTO_VER >> README_$NAME.txt
+echo $BUSY : $BUSY_VER >> README_$NAME.txt
+echo $CALC : $CALC_VER >> README_$NAME.txt
+echo $DEVIOCSTATS : $STAT_VER >> README_$NAME.txt
+echo $SSCAN : $SCAN_VER >> README_$NAME.txt
+echo $SEQ : $SEQ_VER >> README_$NAME.txt
+cp README_$NAME.txt $HOME/temp/README.txt
 
 cd $HOME
 echo tarring...

@@ -69,7 +69,7 @@ echo
 cd $HOME
 
 echo generating envPaths...
-bash scripts/generateEnvPaths.sh $1 $2
+bash generateEnvPaths.sh $1 $2
 echo
 
 echo copying prebuilt st.cmd...
