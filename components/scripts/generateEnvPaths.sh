@@ -54,5 +54,5 @@ echo epicsEnvSet\(\"ADPLUGINBAR\", \"$AREA_DETECTOR/ADPluginBar\"\) >> envPaths
 #echo epicsEnvSet\(\"NORMATIVETYPES\", \"$BASE/modules/normativeTypes\"\) >> envPaths
 
 
-
+cp $1/envPaths $1/OLD_envPaths
 mv envPaths $1
