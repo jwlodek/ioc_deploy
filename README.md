@@ -1,5 +1,7 @@
 # ioc_deploy #
 
+## Online manual can be found [here](https://rollandmichael7.github.io/ioc-manual/) ##
+
 **This script is a modified version of Mark Rivers's makeADPrebuilt script, which can be found at 
 https://github.com/areaDetector/areaDetector/blob/master/makeADPrebuilt**
 
