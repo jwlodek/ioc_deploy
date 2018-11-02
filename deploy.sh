@@ -91,10 +91,13 @@ if [ $# -eq 4 ]; then
 fi
 
 DATE=`date +%Y-%m-%d`
+# get OS from /etc/issue, remove trailing \n \l, remove trailing space, replace spaces with underscores
+OS="$(more /etc/issue | cut -d'\' -f1 | sed -e 's/[[:space:]]*$//' | tr ' ' _)"
+echo OS : $OS
 
 # name of tar file
 # do not include extension
-NAME=${arg1}_${arg2}_${arg3}_$DATE
+NAME=${arg1}_${arg2}_${OS}_$DATE
 
 # path to folder containing tar
 DESTINATION="DEPLOYMENTS"
