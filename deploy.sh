@@ -93,7 +93,9 @@ fi
 DATE=`date +%Y-%m-%d`
 # get OS from /etc/issue, remove trailing \n \l, remove trailing space, replace spaces with underscores
 OS="$(more /etc/issue | cut -d'\' -f1 | sed -e 's/[[:space:]]*$//' | tr ' ' _)"
-echo OS : $OS
+# remove '_GNU/Linux' from OS
+OS=${OS//'_GNU/Linux'/}
+echo OS: $OS
 
 # name of tar file
 # do not include extension
