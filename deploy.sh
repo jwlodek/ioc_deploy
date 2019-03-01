@@ -17,7 +17,8 @@ find . -name '*.exe.*' -exec rm -fv {} \;
 AREA_DETECTOR=areaDetector
 BASE_TOP=/controls/devel
 BASE=base-7-0-1-1
-SUPPORT=/controls/devel/support
+#SUPPORT=/controls/devel/support
+SUPPORT=/home/mrolland/Documents/support
 # required EPICS modules
 # must be names of folders in $SUPPORT
 ASYN=asyn
@@ -25,12 +26,12 @@ AUTOSAVE=autosave
 BUSY=busy
 CALC=calc
 DEVIOCSTATS=iocStats
-SEQ=seq
+SEQ=seq-2-2-5
 SSCAN=sscan
 
 # AreaDetector drivers to be packaged
 declare -a det=(
-	"ADProsilica"
+    "ADProsilica"
     "ADSimDetector"
     "ADPluginBar"
     "ADAndor3"
@@ -136,10 +137,15 @@ cd $HOME
 cd $BASE_TOP
 cp --parents -r -n $BASE/bin/$arg3 $HOME/temp
 cp --parents -r -n $BASE/lib/$arg3 $HOME/temp
+cp --parents -r -n $BASE/lib/perl $HOME/temp
+cp --parents -r -n $BASE/configure $HOME/temp
+cp --parents -r -n $BASE/include   $HOME/temp
+cp --parents -r -n $BASE/startup   $HOME/temp
 cd $BASE
 BASE_VER=$(git describe --tags)
 cd $DESTINATION
 echo $BASE : $BASE_VER >> README_$NAME.txt
+
 cd $SUPPORT
 cp --parents -r -n $AREA_DETECTOR/ADCore/db $HOME/temp
 cp --parents -r -n $AREA_DETECTOR/ADCore/documentation $HOME/temp
@@ -154,11 +160,15 @@ cp --parents -r -n $AREA_DETECTOR/ADSupport/lib/$arg3 $HOME/temp
 
 cp --parents -r -n $ASYN/opi $HOME/temp
 cp --parents -r -n $ASYN/db $HOME/temp
+cp --parents -r -n $ASYN/configure $HOME/temp
+cp --parents -r -n $ASYN/include $HOME/temp
 cp --parents -r -n $ASYN/bin/$arg3 $HOME/temp
 cp --parents -r -n $ASYN/lib/$arg3 $HOME/temp
 
 cp --parents -r -n $AUTOSAVE/asApp/ $HOME/temp
 cp --parents -r -n $AUTOSAVE/asApp/op $HOME/temp
+cp --parents -r -n $AUTOSAVE/configure $HOME/temp
+cp --parents -r -n $AUTOSAVE/include $HOME/temp
 cp --parents -r -n $AUTOSAVE/bin/$arg3 $HOME/temp
 cp --parents -r -n $AUTOSAVE/lib/$arg3 $HOME/temp
 cp --parents -r -n $AUTOSAVE/db $HOME/temp
@@ -166,24 +176,34 @@ cp --parents -r -n $AUTOSAVE/dbd $HOME/temp
 
 cp --parents -r -n $BUSY/busyApp/Db $HOME/temp
 cp --parents -r -n $BUSY/busyApp/op $HOME/temp
+cp --parents -r -n $BUSY/configure $HOME/temp
+cp --parents -r -n $BUSY/include $HOME/temp
 cp --parents -r -n $BUSY/bin/$arg3 $HOME/temp
 cp --parents -r -n $BUSY/lib/$arg3 $HOME/temp
 
 cp --parents -r -n $CALC/calcApp/Db $HOME/temp
 cp --parents -r -n $CALC/calcApp/ $HOME/temp
+cp --parents -r -n $CALC/configure $HOME/temp
+cp --parents -r -n $CALC/include $HOME/temp
 cp --parents -r -n $CALC/bin/$arg3 $HOME/temp
 cp --parents -r -n $CALC/lib/$arg3 $HOME/temp
 
 cp --parents -r -n $DEVIOCSTATS/db $HOME/temp
 cp --parents -r -n $DEVIOCSTATS/op/adl $HOME/temp
+cp --parents -r -n $DEVIOCSTATS/configure $HOME/temp
+cp --parents -r -n $DEVIOCSTATS/include $HOME/temp
 cp --parents -r -n $DEVIOCSTATS/bin/$arg3 $HOME/temp
 cp --parents -r -n $DEVIOCSTATS/lib/$arg3 $HOME/temp
 
+cp --parents -r -n $SEQ/configure $HOME/temp
+cp --parents -r -n $SEQ/include $HOME/temp
 cp --parents -r -n $SEQ/bin/$arg3 $HOME/temp
 cp --parents -r -n $SEQ/lib/$arg3 $HOME/temp
 
 cp --parents -r -n $SSCAN/sscanApp/Db $HOME/temp
 cp --parents -r -n $SSCAN/sscanApp/op $HOME/temp
+cp --parents -r -n $SSCAN/configure $HOME/temp
+cp --parents -r -n $SSCAN/include $HOME/temp
 cp --parents -r -n $SSCAN/bin/$arg3 $HOME/temp
 cp --parents -r -n $SSCAN/lib/$arg3 $HOME/temp
 
@@ -193,6 +213,8 @@ do
 	EXISTS=$(ls | grep $MOD)
 	if ! [ -z "$EXISTS" ]; then
 		cp --parents -r -n $MOD/db $HOME/temp
+		cp --parents -r -n $MOD/configure $HOME/temp
+		cp --parents -r -n $MOD/include $HOME/temp
 		cp --parents -r -n $MOD/bin/$arg3 $HOME/temp
 		cp --parents -r -n $MOD/lib/$arg3 $HOME/temp
 		cp --parents -r -n $MOD/*App/Db $HOME/temp
@@ -219,6 +241,8 @@ fi
 while ! [ "$PLUGIN" = done ]; do
     EXISTS=$(ls $AREA_DETECTOR | grep $PLUGIN)
     if ! [ -z "$EXISTS" ]; then
+		cp --parents -r -n $AREA_DETECTOR/$PLUGIN/configure $HOME/temp
+		cp --parents -r -n $AREA_DETECTOR/$PLUGIN/include $HOME/temp
 		cp --parents -r -n $AREA_DETECTOR/$PLUGIN/db $HOME/temp
 		cp --parents -r -n $AREA_DETECTOR/$PLUGIN/bin/$arg3 $HOME/temp
 		cp --parents -r -n $AREA_DETECTOR/$PLUGIN/lib/$arg3 $HOME/temp
