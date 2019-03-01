@@ -17,8 +17,7 @@ find . -name '*.exe.*' -exec rm -fv {} \;
 AREA_DETECTOR=areaDetector
 BASE_TOP=/controls/devel
 BASE=base-7-0-1-1
-#SUPPORT=/controls/devel/support
-SUPPORT=/home/mrolland/Documents/support
+SUPPORT=/controls/devel/support
 # required EPICS modules
 # must be names of folders in $SUPPORT
 ASYN=asyn
@@ -26,7 +25,7 @@ AUTOSAVE=autosave
 BUSY=busy
 CALC=calc
 DEVIOCSTATS=iocStats
-SEQ=seq-2-2-5
+SEQ=seq
 SSCAN=sscan
 
 # AreaDetector drivers to be packaged
