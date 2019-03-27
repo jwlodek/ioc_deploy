@@ -31,15 +31,6 @@ BASE_TOP=/eApps/epics
 BASE=base
 SUPPORT=/eApps/epics/support
 
-# Argument flags:
-#     -f: Skip prompt to add another driver
-#     -a: Skip prompt and use list of drivers "det" instead
-#     -h: Display help
-DetArray="n"
-SKIP="n"
-arg1=$1
-arg2=$2
-arg3=$3
 declare -a det=("ADProsilica"
     "ADSimDetector"
     "ADPluginBar"
@@ -54,6 +45,31 @@ declare -a det=("ADProsilica"
     "ADPointGrey"
 #    "ADEiger"
     )
+
+# additional EPICS modules to be packaged
+declare -a epics=(
+	"modbus"
+	"quadEM"
+	)
+
+DATE=`date +%Y-%m-%d`
+# get OS from /etc/issue, remove trailing \n \l, remove trailing space, replace spaces with underscores
+OS="$(more /etc/issue | cut -d'\' -f1 | sed -e 's/[[:space:]]*$//' | tr ' ' _)"
+# remove '_GNU/Linux' from OS
+OS=${OS//'_GNU/Linux'/}
+echo OS: $OS
+
+# Argument flags:
+#     -f: Skip prompt to add another driver
+#     -a: Skip prompt and use list of drivers "det" instead
+#     -h: Display help
+DetArray="n"
+SKIP="n"
+arg1=$1
+arg2=$2
+arg3=$3
+
+
 if [ $1 = "-h" ]; then
     echo 'Tool for creating a deployment of an AreaDetector IOC.'
     echo 'Ensure macros are set correctly before running.'
