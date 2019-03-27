@@ -34,9 +34,9 @@ CALC=calc
 DEVIOCSTATS=iocStats
 SEQ=seq
 SSCAN=sscan
-BASE_TOP=/controls/devel
-BASE=base-7-0-1-1
-SUPPORT=/controls/devel/support
+BASE_TOP=/eApps/epics
+BASE=base
+SUPPORT=/eApps/epics/support
 
 # Argument flags:
 #     -f: Skip prompt to add another plugin
@@ -50,9 +50,16 @@ arg3=$3
 declare -a det=("ADProsilica"
     "ADSimDetector"
     "ADPluginBar"
+    "ADCompVision"
+    "ADPluginEdge"
+    "ADUVC"
     "ADAndor3"
     "ADPilatus"
     "ADMerlin"
+
+#    "ADLambda"
+    "ADPointGrey"
+#    "ADEiger"
     )
 if [ $1 = "-h" ]; then
     echo 'Tool for creating a deployment of an AreaDetector IOC.'
