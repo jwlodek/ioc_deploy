@@ -15,9 +15,6 @@ find . -name 'core.*' -exec rm -fv {} \;
 find . -name '*.exe.*' -exec rm -fv {} \;
 
 AREA_DETECTOR=areaDetector
-BASE_TOP=/controls/devel
-BASE=base-7-0-1-1
-SUPPORT=/controls/devel/support
 # required EPICS modules
 # must be names of folders in $SUPPORT
 ASYN=asyn
